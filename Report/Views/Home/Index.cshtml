@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+<ul>
+    <li style="font-size: 2em; border: 1px solid coral; border-radius: 10px; padding: 15px">
+        <a href="@Url.Action("List","Home")" class="btn btn-lg btn-success" id="simple1">لیست ساده</a> <span class="label label-danger la" for="simple1">(همراه با تعیین نام)</span>
+        <br />
+        <br />
+        <br />
+        <a href="@Url.Action("List2","Home")" class="btn btn-lg btn-success" id="simple2">لیست ساده</a> <span class="label label-info" for="simple2">(مستقیم با نام پیش فرض)</span>
+    </li>
+    <li>
+        <hr />
+    </li>
+    <li style="font-size: 2em; border: 1px solid darkolivegreen; border-radius: 10px; padding: 15px">
+        <a href="@Url.Action("Group","Home")" class="btn btn-lg btn-success" id="simple2">گروه بندی</a> <span class="label label-info" for="simple2">(مستقیم با نام پیش فرض)</span>
+    </li>
+    <li>
+        <hr />
+    </li>
+    <li style="font-size: 2em; border: 1px solid moccasin; border-radius: 10px; padding: 15px">
+        <a href="@Url.Action("Headers","Home")" class="btn btn-lg btn-success" id="simple2">سر برگ</a> <span class="label label-info" for="simple2">(مستقیم با نام پیش فرض)</span>
+    </li>
+    <li>
+        <hr />
+    </li>
+    <li style="font-size: 2em; border: 1px solid mediumpurple; border-radius: 10px; padding: 15px">
+        <a href="@Url.Action("InlineHeaders","Home")" class="btn btn-lg btn-success" id="simple2"> سر برگ با inline</a> <span class="label label-info" for="simple2">(مستقیم با نام پیش فرض)</span>
+    </li>
+    <li>
+        <hr />
+    </li>
+</ul>
