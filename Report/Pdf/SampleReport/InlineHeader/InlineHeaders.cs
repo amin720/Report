@@ -48,15 +48,15 @@ namespace Report.Pdf.SampleReport.InlineHeader
 				})
 				.PagesFooter(footer =>
 				{
-					var date = DateTime.Now.ToString("MM/dd/yyyy");
+					var date = DateTime.Now.ToPersianDateTime(" / ", false);
 					footer.InlineFooter(inlineFooter =>
 					{
 						inlineFooter.FooterProperties(new FooterBasicProperties
 						{
 							PdfFont = footer.PdfFont,
-							HorizontalAlignment = HorizontalAlignment.Center,
-							RunDirection = PdfRunDirection.LeftToRight,
-							SpacingBeforeTable = 30,
+							HorizontalAlignment = HorizontalAlignment.Right,
+							RunDirection = PdfRunDirection.RightToLeft,
+							SpacingBeforeTable = 5,
 							TotalPagesCountTemplateHeight = 9,
 							TotalPagesCountTemplateWidth = 50
 						});
@@ -76,7 +76,7 @@ namespace Report.Pdf.SampleReport.InlineHeader
 						{
 							var valDate = DateTime.Now.ToPersianDateTime(" / ", false);
 
-							return CreateHeader(header,valDate);
+							return CreateHeader(header, valDate);
 						});
 					});
 				})
@@ -87,6 +87,7 @@ namespace Report.Pdf.SampleReport.InlineHeader
 				.MainTablePreferences(table =>
 				{
 					table.ColumnsWidthsType(TableColumnWidthType.Relative);
+					table.NumberOfDataRowsPerPage(9);
 				})
 				.MainTableDataSource(dataSource =>
 				{
@@ -171,8 +172,15 @@ namespace Report.Pdf.SampleReport.InlineHeader
 								{
 									var data = cellData.Attributes.RowData.TableRowData;
 									var id = data.GetSafeStringValueOf<Employee>(x => x.Id);
+									var person = data.GetSafeStringValueOf<Employee>(e => e.FullName);
+									var salary = data.GetSafeStringValueOf<Employee>(e => e.Salary);
+									var department = data.GetSafeStringValueOf<Employee>(e => e.Department.Name);
+									var manager = data.GetSafeStringValueOf<Employee>(e => e.Manager.Employee.FullName);
 
-									var qrcode = new BarcodeQRCode(id, 1, 1, null);
+									var dataString =
+										$"The {person} with id: {id} , Salary: {salary}$ \n\n Department: {department} \n\n Manager: {manager}";
+
+									var qrcode = new BarcodeQRCode(dataString, 1, 1, null);
 									var image = qrcode.GetImage();
 									var mask = qrcode.GetImage();
 									mask.MakeMask();
@@ -196,7 +204,7 @@ namespace Report.Pdf.SampleReport.InlineHeader
 				.Generate(data => data.AsPdfFile(string.Format("{0}\\Pdf\\InlineProvidersPdfReport-{1}.pdf", AppPath.ApplicationPath, Guid.NewGuid().ToString("N"))), debugMode: true);
 		}
 
-		private static PdfGrid CreateHeader(PagesHeaderBuilder header,string valDate)
+		private static PdfGrid CreateHeader(PagesHeaderBuilder header, string valDate)
 		{
 			var table = new PdfGrid(numColumns: 3)
 			{
@@ -206,13 +214,16 @@ namespace Report.Pdf.SampleReport.InlineHeader
 			};
 			table.DefaultCell.Border = Rectangle.NO_BORDER;
 
-			table.SetWidths(new int[]{33,33,33});
+			table.SetWidths(new int[] { 33, 33, 33});
 
-			// table 1
+			#region Table 1
+
 			var tb1 = new PdfPTable(numColumns: 2)
 			{
-				//PaddingTop = 30
+				PaddingTop = 50,
 			};
+			tb1.DefaultCell.Top = 50;
+			tb1.DefaultCell.PaddingTop = 50;
 			tb1.DefaultCell.MinimumHeight = 60;
 			tb1.DefaultCell.Border = Rectangle.NO_BORDER;
 			tb1.DefaultCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
@@ -221,57 +232,54 @@ namespace Report.Pdf.SampleReport.InlineHeader
 			var valMov = header.PdfFont.FontSelector.Process("123214");
 			var noDae = header.PdfFont.FontSelector.Process("شماره دائم:");
 			var valDae = header.PdfFont.FontSelector.Process("12324");
-			var date = header.PdfFont.FontSelector.Process("تاریخ:");
+			var date = header.PdfFont.FontSelector.Process("تاریخ سند:");
 			var datePhrase = header.PdfFont.FontSelector.Process(valDate);
 
-			
+
 			tb1.AddCell(new PdfPCell(valMov)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				Border = 0,
 				HorizontalAlignment = Element.ALIGN_CENTER,
 				Padding = 5,
-				
+				PaddingTop = 13,
 
 			});
 			tb1.AddCell(new PdfPCell(noMov)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				BorderWidth = 0,
-				HorizontalAlignment = Element.ALIGN_RIGHT,
+				HorizontalAlignment = Element.ALIGN_CENTER,
 				ArabicOptions = 1,
 				Padding = 5,
+				PaddingTop = 13,
 			});
 
-			
+
 			tb1.AddCell(new PdfPCell(valDae)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				Border = 0,
 				HorizontalAlignment = Element.ALIGN_CENTER,
-				Padding = 10,
+				Padding = 5,
 
 			});
 			tb1.AddCell(new PdfPCell(noDae)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				BorderWidth = 0,
-				HorizontalAlignment = Element.ALIGN_RIGHT,
+				HorizontalAlignment = Element.ALIGN_CENTER,
 				ArabicOptions = 1,
-				Padding = 10,
+				Padding = 5,
 			});
 
 
-			
+
 			tb1.AddCell(new PdfPCell(datePhrase)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_LTR,
 				Border = 0,
 				HorizontalAlignment = Element.ALIGN_CENTER,
-				//PaddingRight = 0,
-				//PaddingTop = 10,
-				//PaddingLeft = 0,
-				//PaddingBottom = 15,
 				Padding = 5
 
 			});
@@ -280,17 +288,16 @@ namespace Report.Pdf.SampleReport.InlineHeader
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				BorderWidth = 0,
 				HorizontalAlignment = Element.ALIGN_CENTER,
-				//PaddingRight = 0,
-				//PaddingTop = 10,
-				//PaddingLeft = 0,
-				//PaddingBottom = 15,
 				Padding = 5
 
 			});
 
 			table.AddCell(new PdfPTable(tb1));
 
-			// table 2
+			#endregion
+
+			#region Table 2
+
 			var tb2 = new PdfPTable(numColumns: 1);
 			tb2.DefaultCell.MinimumHeight = 60;
 			tb2.DefaultCell.Border = Rectangle.NO_BORDER;
@@ -298,157 +305,294 @@ namespace Report.Pdf.SampleReport.InlineHeader
 			var headerTitle = header;
 			var headerTitle2 = headerTitle;
 
-			if (headerTitle.PdfFont != null)
+			headerTitle.PdfFont.FontSelector.AddFont(font3);
+			headerTitle.PdfFont.Size = 25;
+			headerTitle.PdfFont.Style = DocumentFontStyle.Bold;
+
+
+
+			var nameCo = headerTitle.PdfFont.FontSelector.Process("نام سند");
+
+			tb2.AddCell(new PdfPCell(nameCo)
 			{
-				headerTitle.PdfFont.FontSelector.AddFont(font3);
-				headerTitle.PdfFont.Size = 25;
-				headerTitle.PdfFont.Style = DocumentFontStyle.Bold;
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				BorderWidth = 0,
+				HorizontalAlignment = Element.ALIGN_CENTER,
+				Top = 25,
 
-			
+			});
 
-				var nameCo = headerTitle.PdfFont.FontSelector.Process("نام شرکت");
+			headerTitle2.PdfFont.Size = 40;
+			headerTitle2.PdfFont.Style = DocumentFontStyle.Bold;
 
-				tb2.AddCell(new PdfPCell(nameCo)
-				{
-					RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-					BorderWidth = 0,
-					HorizontalAlignment = Element.ALIGN_CENTER,
-					Top = 25,
-
-				});
-
-				headerTitle2.PdfFont.Size = 40;
-				headerTitle2.PdfFont.Style = DocumentFontStyle.Bold;
-
-				var nameDoc = headerTitle2.PdfFont.FontSelector.Process("نام سند");
-				tb2.AddCell(new PdfPCell(nameDoc)
-				{
-					RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-					BorderWidth = 0,
-					HorizontalAlignment = Element.ALIGN_CENTER,
-					PaddingTop = 5,
-					PaddingBottom = 15
-				});
-				table.AddCell(new PdfPTable(tb2));
-
-				// table 3
-				var tb3 = new PdfPTable(numColumns: 2);
-				tb3.DefaultCell.MinimumHeight = 30;
-				tb3.DefaultCell.Border = Rectangle.NO_BORDER;
-
-				header.PdfFont.Size = 9;
-				header.PdfFont.Style = DocumentFontStyle.Normal;
-
-				var docType = header.PdfFont.FontSelector.Process("نوع سند:");
-				var valType = header.PdfFont.FontSelector.Process("123214");
-				var docDesc = header.PdfFont.FontSelector.Process("شرح سند:");
-				var valDesc = header.PdfFont.FontSelector.Process("12324");
-
-			
-				tb3.AddCell(new PdfPCell(valType)
-				{
-					RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-					Border = 0,
-					HorizontalAlignment = Element.ALIGN_CENTER,
-					Padding = 15,
-				
-
-				});
-				tb3.AddCell(new PdfPCell(docType)
-				{
-					RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-					BorderWidth = 0,
-					HorizontalAlignment = Element.ALIGN_RIGHT,
-					Padding = 15,
-				});
+			var nameDoc = headerTitle2.PdfFont.FontSelector.Process("نام شرکت");
+			tb2.AddCell(new PdfPCell(nameDoc)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				BorderWidth = 0,
+				HorizontalAlignment = Element.ALIGN_CENTER,
+				PaddingTop = 5,
+				PaddingBottom = 15
+			});
+			table.AddCell(new PdfPTable(tb2));
 
 
-			
-				tb3.AddCell(new PdfPCell(valDesc)
-				{
-					RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-					Border = 0,
-					HorizontalAlignment = Element.ALIGN_CENTER,
-					Padding = 10,
+			#endregion
 
-				});
-				tb3.AddCell(new PdfPCell(docDesc)
-				{
-					RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-					BorderWidth = 0,
-					HorizontalAlignment = Element.ALIGN_RIGHT,
-					Padding = 10,
-				});
+			#region Table 3
 
-				table.AddCell(new PdfPTable(tb3));
-			}
+			var tb3 = new PdfPTable(numColumns: 2);
+			tb3.DefaultCell.MinimumHeight = 30;
+			tb3.DefaultCell.Border = Rectangle.NO_BORDER;
+
+			header.PdfFont.Size = 9;
+			header.PdfFont.Style = DocumentFontStyle.Normal;
+
+			var docType = header.PdfFont.FontSelector.Process("نوع سند:");
+			var valType = header.PdfFont.FontSelector.Process("123214");
+
+
+
+			tb3.AddCell(new PdfPCell(valType)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				Border = 0,
+				HorizontalAlignment = Element.ALIGN_CENTER,
+				Padding = 15,
+
+
+			});
+			tb3.AddCell(new PdfPCell(docType)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				BorderWidth = 0,
+				HorizontalAlignment = Element.ALIGN_RIGHT,
+				Padding = 15,
+			});
+
+			header.PdfFont.Size = 9;
+			header.PdfFont.Style = DocumentFontStyle.Normal;
+
+			var valDesc = header.PdfFont.FontSelector.Process("سلام خوبی منم خوبم \n راستی این برنامه جدید رو دیدی که \n دارن نرم افزار حسابداری درست میکنن");
+
+			tb3.AddCell(new PdfPCell(valDesc)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				Border = 0,
+				HorizontalAlignment = Element.ALIGN_CENTER,
+				Padding = 10,
+			});
+
+			header.PdfFont.Size = 9;
+			var docDesc = header.PdfFont.FontSelector.Process("شرح سند:");
+
+
+			tb3.AddCell(new PdfPCell(docDesc)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				BorderWidth = 0,
+				HorizontalAlignment = Element.ALIGN_RIGHT,
+				Padding = 10,
+			});
+
+
+
+			table.AddCell(new PdfPTable(tb3));
+
+			#endregion
 
 			return table;
 		}
 
 		private static PdfGrid CreateFooter(PagesFooterBuilder footer, string date, FooterData data)
 		{
-			var table = new PdfGrid(numColumns: 4)
+			var table = new PdfGrid(numColumns: 1)
 			{
 				WidthPercentage = 100,
-				RunDirection = PdfWriter.RUN_DIRECTION_LTR
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				SpacingAfter = 10,
 			};
 
-			var datePhrase = footer.PdfFont.FontSelector.Process(date);
-			var datePdfCell = new PdfPCell(datePhrase)
+			table.DefaultCell.Border = Rectangle.NO_BORDER;
+			table.SetWidths(new int[] { 100 });
+
+			var rowTB_1 = new PdfPTable(numColumns: 3)
 			{
-				RunDirection = PdfWriter.RUN_DIRECTION_LTR,
-				BorderWidthLeft = 0,
-				BorderWidthRight = 0,
-				BorderWidthTop = 1,
-				BorderWidthBottom = 0,
+				SpacingAfter = 4
+			};
+			rowTB_1.DefaultCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+			rowTB_1.DefaultCell.Border = Rectangle.TOP_BORDER;
+			rowTB_1.DefaultCell.BorderColorRight = BaseColor.LIGHT_GRAY;
+			rowTB_1.DefaultCell.BorderWidthTop = 1;
+			rowTB_1.SetWidths(new int[] { 33,33,33 });
+
+			#region Row 1
+
+			#region Table 3
+
+			var tb13 = new PdfPTable(numColumns: 2);
+			tb13.DefaultCell.MinimumHeight = 20;
+			tb13.DefaultCell.Border = Rectangle.NO_BORDER;
+
+
+			var valConfirmation3 = footer.PdfFont.FontSelector.Process("محمد امین زینالی");
+			tb13.AddCell(new PdfPCell(valConfirmation3)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				Padding = 4,
-				BorderColorTop = new BaseColor(System.Drawing.Color.LightGray.ToArgb()),
-				HorizontalAlignment = Element.ALIGN_CENTER
-			};
+				PaddingLeft = 0,
+				HorizontalAlignment = Element.ALIGN_CENTER,
+				Border = Rectangle.NO_BORDER
+			});
 
-			var nullPdfCell = new PdfPCell
+			var dataConfirmation3 = footer.PdfFont.FontSelector.Process("تایید کننده:");
+			tb13.AddCell(new PdfPCell(dataConfirmation3)
 			{
-				RunDirection = PdfWriter.RUN_DIRECTION_LTR,
-				BorderWidthLeft = 0,
-				BorderWidthRight = 0,
-				BorderWidthTop = 1,
-				BorderWidthBottom = 0,
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				Padding = 4,
-				BorderColorTop = new BaseColor(System.Drawing.Color.LightGray.ToArgb()),
-				HorizontalAlignment = Element.ALIGN_RIGHT
-			};
+				HorizontalAlignment = Element.ALIGN_CENTER,
+				Border = Rectangle.NO_BORDER
+			});
 
-			var pageNumberPhrase = footer.PdfFont.FontSelector.Process("Page " + data.CurrentPageNumber + " of ");
-			var pageNumberPdfCell = new PdfPCell(pageNumberPhrase)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_LTR,
-				BorderWidthLeft = 0,
-				BorderWidthRight = 0,
-				BorderWidthTop = 1,
-				BorderWidthBottom = 0,
-				Padding = 4,
-				BorderColorTop = new BaseColor(System.Drawing.Color.LightGray.ToArgb()),
-				HorizontalAlignment = Element.ALIGN_RIGHT
-			};
+			rowTB_1.AddCell(tb13);
+			#endregion
 
-			var totalPagesNumberImagePdfCell = new PdfPCell(data.TotalPagesCountImage)
+			#region Table 2
+
+			var tb12 = new PdfPTable(numColumns: 2);
+			tb12.DefaultCell.MinimumHeight = 20;
+			tb12.DefaultCell.Border = Rectangle.NO_BORDER;
+
+
+			var valConfirmation = footer.PdfFont.FontSelector.Process("محمد امین زینالی");
+			tb12.AddCell(new PdfPCell(valConfirmation)
 			{
-				RunDirection = PdfWriter.RUN_DIRECTION_LTR,
-				BorderWidthLeft = 0,
-				BorderWidthRight = 0,
-				BorderWidthTop = 1,
-				BorderWidthBottom = 0,
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				Padding = 4,
 				PaddingLeft = 0,
 				BorderColorTop = new BaseColor(System.Drawing.Color.LightGray.ToArgb()),
-				HorizontalAlignment = Element.ALIGN_LEFT
-			};
+				HorizontalAlignment = Element.ALIGN_CENTER,
+				Border = Rectangle.NO_BORDER
+			});
+			var dataConfirmation = footer.PdfFont.FontSelector.Process("تایید کننده:");
+			tb12.AddCell(new PdfPCell(dataConfirmation)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				Padding = 4,
+				HorizontalAlignment = Element.ALIGN_CENTER,
+				Border = Rectangle.NO_BORDER
+			});
 
-			table.AddCell(datePdfCell);
-			table.AddCell(nullPdfCell);
-			table.AddCell(pageNumberPdfCell);
-			table.AddCell(totalPagesNumberImagePdfCell);
+			rowTB_1.AddCell(tb12);
+			#endregion
+
+			#region Table 1
+
+			var tb11 = new PdfPTable(numColumns: 2);
+			tb11.DefaultCell.MinimumHeight = 20;
+			tb11.DefaultCell.Border = Rectangle.NO_BORDER;
+
+			var valRegolator = footer.PdfFont.FontSelector.Process("محمد امین زینالی");
+			tb11.AddCell(new PdfPCell(valRegolator)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				Padding = 4,
+				HorizontalAlignment = Element.ALIGN_CENTER,
+				Border = Rectangle.NO_BORDER
+			});
+
+			var dateRegolator = footer.PdfFont.FontSelector.Process("تنظیم کننده:");
+			tb11.AddCell(new PdfPCell(dateRegolator)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				Padding = 4,
+				HorizontalAlignment = Element.ALIGN_CENTER,
+				Border = Rectangle.NO_BORDER
+			});
+
+			rowTB_1.AddCell(tb11);
+			#endregion
+
+			#endregion
+
+			var rowTB_2 = new PdfPTable(3)
+			{
+				SpacingAfter = 15
+			};
+			rowTB_2.DefaultCell.Border = Rectangle.TOP_BORDER;
+			rowTB_2.DefaultCell.BorderColorRight = BaseColor.LIGHT_GRAY;
+			rowTB_2.DefaultCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+			rowTB_2.DefaultCell.BorderWidthTop = 1;
+			rowTB_2.SetWidths(new int[] { 33,33,33 });
+
+			#region Row 2
+
+			#region Table 1
+			var tb21 = new PdfPTable(numColumns: 1);
+			tb21.DefaultCell.MinimumHeight = 20;
+			
+
+			var nameCo = footer.PdfFont.FontSelector.Process("ساخته شده توسط نرم افزار مدیریت مالی دکا");
+			tb21.AddCell(new PdfPCell(nameCo)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				Padding = 4,
+				HorizontalAlignment = Element.ALIGN_RIGHT,
+				Border = Rectangle.NO_BORDER
+			});
+
+			rowTB_2.AddCell(tb21);
+			#endregion
+
+			#region Table 2
+
+			var tb22 = new PdfPTable(numColumns: 1);
+			tb22.DefaultCell.MinimumHeight = 20;
+
+			tb22.AddCell(new PdfPCell()
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				Padding = 4,
+				HorizontalAlignment = Element.ALIGN_RIGHT,
+				Border = Rectangle.NO_BORDER
+			});
+
+			rowTB_2.AddCell(tb22);
+			#endregion
+
+			#region Table 3
+
+			var tb23 = new PdfPTable(numColumns: 2);
+			tb23.DefaultCell.MinimumHeight = 20;
+
+			tb23.AddCell(new PdfPCell(data.TotalPagesCountImage)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				Padding = 4,
+				PaddingLeft = 0,
+				HorizontalAlignment = Element.ALIGN_LEFT,
+				Border = Rectangle.NO_BORDER
+			});
+
+			var pageNumberPhrase = footer.PdfFont.FontSelector.Process("صفحه " + data.CurrentPageNumber + "  از  ");
+			tb23.AddCell(new PdfPCell(pageNumberPhrase)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				Padding = 4,
+				HorizontalAlignment = Element.ALIGN_RIGHT,
+				Border = Rectangle.NO_BORDER
+			});
+
+
+
+			rowTB_2.AddCell(tb23);
+			#endregion
+
+			#endregion
+
+			
+			table.AddCell(rowTB_1);
+			table.AddCell(rowTB_2);
 			return table;
 		}
 	}
