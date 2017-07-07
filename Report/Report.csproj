@@ -133,9 +133,11 @@
     <Content Include="Pdf\Data\headerDoc.odt" />
     <Content Include="Pdf\Data\headerDoc.pdf" />
     <Content Include="Pdf\fonts\Arial.ttf" />
-    <Content Include="Pdf\fonts\bnazanb.ttf" />
-    <Content Include="Pdf\fonts\BTitrBd.ttf" />
-    <Content Include="Pdf\fonts\irsans.ttf" />
+    <Content Include="Pdf\fonts\ADanesh.ttf" />
+    <Content Include="Pdf\fonts\BNazanin.ttf" />
+    <Content Include="Pdf\fonts\Calibri.ttf" />
+    <Content Include="Pdf\fonts\IranianSans.ttf" />
+    <Content Include="Pdf\fonts\Tahoma.ttf" />
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Pdf\Images\01.png" />
     <Content Include="Scripts\bootstrap.js" />
@@ -237,6 +239,8 @@
     <Compile Include="Models\VW_User_Organization.cs" />
     <Compile Include="Pdf\AppPath.cs" />
     <Compile Include="Pdf\InstallFonts.cs" />
+    <Compile Include="Pdf\Pdf2Image.cs" />
+    <Compile Include="Pdf\PdfReports.cs" />
     <Compile Include="Pdf\SampleReport\Group\Group.cs" />
     <Compile Include="Pdf\SampleReport\Group\GroupingHeaders.cs" />
     <Compile Include="Pdf\SampleReport\Headers_Footers\Headers_Footers.cs" />
@@ -244,6 +248,7 @@
     <Compile Include="Pdf\SampleReport\Headers_Footers\Header_1\Program.cs" />
     <Compile Include="Pdf\SampleReport\InlineHeader\InlineHeaders.cs" />
     <Compile Include="Pdf\SampleReport\List.cs" />
+    <Compile Include="Pdf\Template\GrayTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -259,7 +264,23 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <COMReference Include="Acrobat">
+      <Guid>{E64169B3-3592-47D2-816E-602C5C13F328}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Reportig\Reportig.csproj">
+      <Project>{238a818c-742d-4be1-af4a-3ca8c1becbd8}</Project>
+      <Name>Reportig</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

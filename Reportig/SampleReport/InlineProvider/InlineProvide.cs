@@ -1,37 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using PdfRpt.Core.Contracts;
 using PdfRpt.Core.Helper;
 using PdfRpt.FluentInterface;
-using Report.Models;
+using Reportig.Template;
 
-namespace Report.Pdf.SampleReport.InlineHeader
+namespace Reportig.SampleReport.InlineProvider
 {
-	public class InlineHeaders
+	class InlineProvide
 	{
-		DBFirst _db = new DBFirst();
+		private static readonly ConstructurePdfReport _report = new ConstructurePdfReport()
+		{
+			//Author = "Mohammad Amin Zeynali",
+			//Application = "Deca Provider",
+			//Keywords = "Accounting, Deca",
+			//Subject = "Report",
+			//Title = "Data",
+			//PageSize = PdfPageSize.A4,
+			//Orientation = PageOrientation.Portrait
+		};
 
-		private readonly Font font1 = InstallFonts.GetFont("bnazanb");
-		private readonly Font font2 = InstallFonts.GetFont("arial");
-		private static readonly Font font3 = InstallFonts.GetFont("BTitrBd");
-		public IPdfReportData CreatePdfReport()
+		// Install Fonts
+		private readonly Font font1 = _report.GetFont(PersianFont.BNazanin);
+		private readonly Font font2 = _report.GetFont(EnglishFont.Calibri);
+
+		public IPdfReportData CreatePdfReport(DbContext model = null,string sqlQuery = null , bool tempraryStatus = false)
 		{
 			return new PdfReport().DocumentPreferences(doc =>
 				{
 					doc.RunDirection(PdfRunDirection.RightToLeft);
-					doc.Orientation(PageOrientation.Portrait);
-					doc.PageSize(PdfPageSize.A4);
+					doc.Orientation(_report.Orientation);
+					doc.PageSize(_report.PageSize);
 					doc.DocumentMetadata(new DocumentMetadata
 					{
-						Author = "محمد امین زینالی",
-						Application = "Report",
-						Keywords = "گزارش گیری ساده",
-						Subject = "گزارش",
-						Title = "گزارش"
-
+						Author = _report.Author,
+						Application = _report.Application,
+						Keywords = _report.Keywords,
+						Subject = _report.Subject,
+						Title = _report.Title
 					});
 					doc.Compression(new CompressionSettings
 					{
@@ -41,8 +51,8 @@ namespace Report.Pdf.SampleReport.InlineHeader
 				})
 				.DefaultFonts(fonts =>
 				{
-					fonts.Path(System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\bnazanb.ttf"),
-						System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\arial.ttf"));
+					fonts.Path(System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\" + font1.Family + ".ttf"),
+						System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\" + font2.Family + ".ttf"));
 					fonts.Size(9);
 					fonts.Color(System.Drawing.Color.Black);
 				})
@@ -82,16 +92,24 @@ namespace Report.Pdf.SampleReport.InlineHeader
 				})
 				.MainTableTemplate(template =>
 				{
-					template.BasicTemplate(BasicTemplate.ClassicTemplate);
+					// the template is custom
+					template.CustomTemplate(new GrayTemplate());
+					// The template is made
+					//template.BasicTemplate(BasicTemplate.ClassicTemplate);
 				})
 				.MainTablePreferences(table =>
 				{
 					table.ColumnsWidthsType(TableColumnWidthType.Relative);
-					table.NumberOfDataRowsPerPage(9);
+					table.NumberOfDataRowsPerPage(10);
 				})
 				.MainTableDataSource(dataSource =>
 				{
-					var employess = _db.Employees.OrderBy(e => e.FullName).ToList();
+					if (!String.IsNullOrEmpty(sqlQuery))
+					{
+						// TODO: repair
+						//var db = model.Database.SqlQuery<>(sqlQuery);
+					}
+					var employess = model.Employees.OrderBy(e => e.FullName).ToList();
 
 					dataSource.StronglyTypedList(employess);
 				})
