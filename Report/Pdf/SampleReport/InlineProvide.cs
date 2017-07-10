@@ -16,7 +16,7 @@ namespace Report.Pdf.SampleReport
 
 		// Install Fonts
 		private readonly Font font1 = _report.GetFont(PersianFont.BNazanin);
-		private readonly Font font2 = _report.GetFont(EnglishFont.Tahoma);
+		private readonly Font font2 = _report.GetFont(EnglishFont.Calibri);
 
 		public IPdfReportData CreatePdfReport(DbContext model = null, string sqlQuery = null, bool tempraryStatus = false)
 		{
@@ -128,7 +128,7 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<TotalAccount>(x => x.Name);
+						column.PropertyName<ViewModel.AccountingViewModel>(x => x.TotalAccountName);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(1);
@@ -138,7 +138,7 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<CertainAccount>(x => x.Name);
+						column.PropertyName<ViewModel.AccountingViewModel>(x => x.CertainAccountName);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(2);
@@ -146,22 +146,22 @@ namespace Report.Pdf.SampleReport
 						column.HeaderCell("حساب معین");
 					});
 
-					//columns.AddColumn(column =>
-					//{
-					//	column.PropertyName<DetailedAccount>(x => x.Name);
-					//	column.CellsHorizontalAlignment(HorizontalAlignment.Center);
-					//	column.IsVisible(true);
-					//	column.Order(3);
-					//	column.Width(2);
-					//	column.HeaderCell("حساب تفصیلی");
-					//});
+					columns.AddColumn(column =>
+					{
+						column.PropertyName<ViewModel.AccountingViewModel>(x => x.DetailedAccountName);
+						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
+						column.IsVisible(true);
+						column.Order(3);
+						column.Width(2);
+						column.HeaderCell("حساب تفصیلی");
+					});
 
 					columns.AddColumn(column =>
 					{
 						column.PropertyName<AccountingDocumentDetail>(x => x.Description);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
-						column.Order(2);
+						column.Order(4);
 						column.Width(4);
 						column.HeaderCell("شرح");
 					});
@@ -171,7 +171,7 @@ namespace Report.Pdf.SampleReport
 						column.PropertyName<AccountingDocumentDetail>(x => x.Creditor);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
-						column.Order(3);
+						column.Order(5);
 						column.Width(2);
 						column.HeaderCell("بستانکار");
 						column.ColumnItemsTemplate(template =>
@@ -193,7 +193,7 @@ namespace Report.Pdf.SampleReport
 						column.PropertyName<AccountingDocumentDetail>(x => x.Debtor);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
-						column.Order(3);
+						column.Order(6);
 						column.Width(2);
 						column.HeaderCell("بدهکار");
 						column.ColumnItemsTemplate(template =>

@@ -11,9 +11,9 @@ namespace Report.ViewModel
 		[DisplayName("شرح")]
 		public string Description { get; set; }
 		[DisplayName("بدهکار")]
-		public decimal Debtor { get; set; }
+		public long? Debtor { get; set; }
 		[DisplayName("بستانکار")]
-		public decimal Creditor { get; set; }
+		public long? Creditor { get; set; }
 		[DisplayName("حساب تفصیلی")]
 		public int DetailedAccountCode { get; set; }
 		public string DetailedAccountName { get; set; }
