@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Services.Description;
 using PdfRpt.Core.Contracts;
 using Report.Models;
 using Report.Pdf.SampleReport.Group;
@@ -55,7 +56,7 @@ namespace Report.Controllers
 	    {
 		    var dbFirst = new DBFirst();
 
-		    var report = new ConstructurePdfReport()
+		    var  report = new Report.Pdf.ConstructurePdfReport()
 		    {
 				Author = "Mohammad Amin Zeynali",
 				Application = "Deca Provider",
@@ -65,8 +66,17 @@ namespace Report.Controllers
 				PageSize = PdfPageSize.A4,
 				Orientation = PageOrientation.Portrait
 			};
+		    var querySql = "SELECT AccountingDocument.Description,Debtor,Creditor"+
+			    ", DetailedAccount.Code,DetailedAccount.Name" +
+			    ",CertainAccount.Code,CertainAccount.Name" +
+			    ",TotalAccount.Code,TotalAccount.Name " +
+			    "FROM Accounting.AccountingDocument "+
+			    "INNER JOIN Accounting.AccountingDocumentDetail ON AccountingDocumentDetail.AccountingDocumentId = AccountingDocument.AccountingDocumentId "+
+		    "INNER JOIN Accounting.DetailedAccount ON DetailedAccount.DetailedAccountId = AccountingDocumentDetail.DetailedAccountId "+
+		    "INNER JOIN Accounting.CertainAccount ON CertainAccount.CertainAccountId = AccountingDocumentDetail.CertainAccountId "+
+			"INNER JOIN Accounting.TotalAccount ON TotalAccount.TotalAccountId = CertainAccount.TotalAccountId";
 
-		    var outputFilePath = report.AccountingReport(dbFirst);
+			var outputFilePath = report.AccountingReport(dbFirst,querySql);
 
 			return Redirect(outputFilePath);
 	    }

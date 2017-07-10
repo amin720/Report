@@ -7,11 +7,12 @@ using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using PdfRpt;
 using PdfRpt.Core.Contracts;
-//using Reportig.SampleReport.InlineProvider;
-using static Reportig.Pdf2Image;
+using PdfRpt.Core.Helper;
+using Report.Pdf.SampleReport;
+using static Report.Pdf.Pdf2Image;
 using Font = iTextSharp.text.Font;
 
-namespace Reportig
+namespace Report.Pdf
 {
 	#region Fonts
 
@@ -62,7 +63,7 @@ namespace Reportig
 		{
 			if (!FontFactory.IsRegistered(persianFont.ToString()))
 			{
-				var fontPath = AppPath.ApplicationPath + "fonts\\" + persianFont.ToString() + ".ttf";
+				var fontPath = AppPath.ApplicationPath + "Pdf\\fonts\\" + persianFont.ToString() + ".ttf";
 				FontFactory.Register(fontPath);
 			}
 
@@ -73,7 +74,7 @@ namespace Reportig
 		{
 			if (!FontFactory.IsRegistered(englishFont.ToString()))
 			{
-				var fontPath = AppPath.ApplicationPath + "fonts\\" + englishFont.ToString() + ".ttf";
+				var fontPath = AppPath.ApplicationPath + "Pdf\\fonts\\" + englishFont.ToString() + ".ttf";
 				FontFactory.Register(fontPath);
 			}
 
@@ -90,8 +91,8 @@ namespace Reportig
 			_eFont = GetFont(EFont);
 
 			var watermarkFont = new GenericFontProvider(
-				System.IO.Path.Combine(AppPath.ApplicationPath, "fonts\\" + _pFont.ToString() + ".ttf"),
-				System.IO.Path.Combine(AppPath.ApplicationPath, "fonts\\" + _eFont.ToString() + ".ttf"))
+				System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\" + _pFont.ToString() + ".ttf"),
+				System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\" + _eFont.ToString() + ".ttf"))
 			{
 				Color = BaseColor.LIGHT_GRAY,
 				Size = 50
@@ -132,12 +133,12 @@ namespace Reportig
 		/// <param name="sqlQuery"></param>
 		/// <param name="tempraryStatus">نمایش یا عدم نمایش شماره موقت</param>
 		/// <returns>یک رشته که مسیر فایل بعد از خروجی است مشخص میکند</returns>
-		//public string AccountingReport(DbContext model = null,string sqlQuery = null, bool tempraryStatus = false)
-		//{
-		//	var rpt = new InlineProvide().CreatePdfReport(model,sqlQuery,tempraryStatus);
-		//	var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
-		//	return outputFilePath;
-		//}
+		public string AccountingReport(DbContext model = null, string sqlQuery = null, bool tempraryStatus = false)
+		{
+			var rpt = new InlineProvide().CreatePdfReport(model, sqlQuery, tempraryStatus);
+			var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
+			return outputFilePath;
+		}
 
 		#endregion
 	}
