@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Linq;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using PdfRpt.Core.Contracts;
@@ -18,7 +19,7 @@ namespace Report.Pdf.SampleReport
 		private readonly Font font1 = _report.GetFont(PersianFont.BNazanin);
 		private readonly Font font2 = _report.GetFont(EnglishFont.Calibri);
 
-		public IPdfReportData CreatePdfReport(DbContext model = null, string sqlQuery = null, bool tempraryStatus = false)
+		public IPdfReportData CreatePdfReport(DbContext modelDbContext = null, string sqlQuery = null, bool tempraryStatus = false)
 		{
 			return new PdfReport().DocumentPreferences(doc =>
 				{
@@ -96,8 +97,12 @@ namespace Report.Pdf.SampleReport
 				{
 					//if (!string.IsNullOrEmpty(sqlQuery))
 					//{
-						// TODO: repair
-						var db = model.Database.SqlQuery<ViewModel.AccountingViewModel>(sqlQuery);
+					// TODO: repair
+					var model = new Deca();
+
+					string querySql = @"SELECT * FROM [DecaFinancial].[dbo].[AccountingPdfReport]";
+
+					var db = model.Database.SqlQuery<AccountingPdfReport>(querySql).ToList();
 					//}
 					//else
 					//{
@@ -128,7 +133,7 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<ViewModel.AccountingViewModel>(x => x.TotalAccountName);
+						column.PropertyName<AccountingPdfReport>(x => x.Total);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(1);
@@ -138,7 +143,7 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<ViewModel.AccountingViewModel>(x => x.CertainAccountName);
+						column.PropertyName<AccountingPdfReport>(x => x.Certain);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(2);
@@ -148,7 +153,7 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<ViewModel.AccountingViewModel>(x => x.DetailedAccountName);
+						column.PropertyName<AccountingPdfReport>(x => x.Detailed);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(3);
@@ -158,7 +163,7 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<AccountingDocumentDetail>(x => x.Description);
+						column.PropertyName<AccountingPdfReport>(x => x.Description);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(4);
@@ -168,7 +173,7 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<AccountingDocumentDetail>(x => x.Creditor);
+						column.PropertyName<AccountingPdfReport>(x => x.Debtor);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(5);
@@ -190,7 +195,7 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<AccountingDocumentDetail>(x => x.Debtor);
+						column.PropertyName<AccountingPdfReport>(x => x.Creditor);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(6);

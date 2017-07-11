@@ -66,15 +66,17 @@ namespace Report.Controllers
 				PageSize = PdfPageSize.A4,
 				Orientation = PageOrientation.Portrait
 			};
-		    var querySql = "SELECT AccountingDocument.Description,Debtor,Creditor"+
-			    ", DetailedAccount.Code,DetailedAccount.Name" +
-			    ",CertainAccount.Code,CertainAccount.Name" +
-			    ",TotalAccount.Code,TotalAccount.Name " +
-			    "FROM Accounting.AccountingDocument "+
-			    "INNER JOIN Accounting.AccountingDocumentDetail ON AccountingDocumentDetail.AccountingDocumentId = AccountingDocument.AccountingDocumentId "+
-		    "INNER JOIN Accounting.DetailedAccount ON DetailedAccount.DetailedAccountId = AccountingDocumentDetail.DetailedAccountId "+
-		    "INNER JOIN Accounting.CertainAccount ON CertainAccount.CertainAccountId = AccountingDocumentDetail.CertainAccountId "+
-			"INNER JOIN Accounting.TotalAccount ON TotalAccount.TotalAccountId = CertainAccount.TotalAccountId";
+		 //   var querySql = "SELECT AccountingDocument.Description,Debtor,Creditor"+
+			//    ", DetailedAccount.Code,DetailedAccount.Name" +
+			//    ",CertainAccount.Code,CertainAccount.Name" +
+			//    ",TotalAccount.Code,TotalAccount.Name " +
+			//    "FROM Accounting.AccountingDocument "+
+			//    "INNER JOIN Accounting.AccountingDocumentDetail ON AccountingDocumentDetail.AccountingDocumentId = AccountingDocument.AccountingDocumentId "+
+		 //   "INNER JOIN Accounting.DetailedAccount ON DetailedAccount.DetailedAccountId = AccountingDocumentDetail.DetailedAccountId "+
+		 //   "INNER JOIN Accounting.CertainAccount ON CertainAccount.CertainAccountId = AccountingDocumentDetail.CertainAccountId "+
+			//"INNER JOIN Accounting.TotalAccount ON TotalAccount.TotalAccountId = CertainAccount.TotalAccountId";
+
+		    var querySql = "SELECT [Description],[IsPermenant],[IsConfirmed],[بدهکار],[بستانکار],[معین],[کل],[تفصیلی] FROM [DecaFinancial].[dbo].[AccountingPdfReport]";
 
 			var outputFilePath = report.AccountingReport(dbFirst,querySql);
 

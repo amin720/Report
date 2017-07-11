@@ -21,8 +21,8 @@ namespace Report.Pdf.Sample
 
 		// نصب فونت هایی که وجو ندارد؛ کافی است فقط اسم فونتی که مد نظر دارید تا نصب شود ذکر شود
 		// در ضمن بایستی در فولدر مشخص شده گذاشته شود
-		private readonly Font font1 = InstallFonts.GetFont("bnazanb");
-		private readonly Font font2 = InstallFonts.GetFont("arial");
+		private readonly Font font1 = InstallFonts.GetFont("BNazanin");
+		private readonly Font font2 = InstallFonts.GetFont("Arial");
 
 		public IPdfReportData CreatePdfReport()
 		{
@@ -57,8 +57,8 @@ namespace Report.Pdf.Sample
 				// قلم های مورد استفاده وارد میشود
 				.DefaultFonts(fonts =>
 				{
-					fonts.Path(System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\bnazanb.ttf"),
-						System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\arial.ttf"));
+					fonts.Path(System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\BNazanin.ttf"),
+						System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\Arial.ttf"));
 					fonts.Size(10);
 					fonts.Color(Color.Black);
 				})
@@ -94,8 +94,8 @@ namespace Report.Pdf.Sample
 					// تعداد ردیف در هر صفحه
 					table.NumberOfDataRowsPerPage(10);
 				})
-				// منبع داده مورد نظر را وارد میکنیم
-				// میتوانیم مبع سفارشی نیز وارد کنیم
+				 //منبع داده مورد نظر را وارد میکنیم
+				 //میتوانیم مبع سفارشی نیز وارد کنیم
 				.MainTableDataSource(dataSource =>
 				{
 					var employess = _db.Employees.OrderBy(p => p.FullName).Include(g => g.Gender).ToList();

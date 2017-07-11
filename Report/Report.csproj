@@ -156,6 +156,7 @@
     <Compile Include="Models\AccountingDocument.cs" />
     <Compile Include="Models\AccountingDocumentDetail.cs" />
     <Compile Include="Models\AccountingDocumentType.cs" />
+    <Compile Include="Models\AccountingPdfReport.cs" />
     <Compile Include="Models\AccountingYear.cs" />
     <Compile Include="Models\AccountKind.cs" />
     <Compile Include="Models\AccountNature.cs" />
@@ -174,7 +175,6 @@
     <Compile Include="Models\Gender.cs" />
     <Compile Include="Models\GroupAccount.cs" />
     <Compile Include="Models\GroupAccountType.cs" />
-    <Compile Include="Models\header_1.cs" />
     <Compile Include="Models\Manager.cs" />
     <Compile Include="Models\RM_columnMetadata.cs" />
     <Compile Include="Models\RM_GetForeignKey.cs" />

@@ -16,6 +16,7 @@ namespace Report.Models
 		public virtual DbSet<Employee> Employees { get; set; }
 		public virtual DbSet<Gender> Genders { get; set; }
 		public virtual DbSet<Manager> Managers { get; set; }
+		public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{

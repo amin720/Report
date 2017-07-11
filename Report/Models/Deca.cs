@@ -59,6 +59,7 @@ namespace Report.Models
 		public virtual DbSet<TBL_UserActiveTime> TBL_UserActiveTime { get; set; }
 		public virtual DbSet<TBL_UserRole> TBL_UserRole { get; set; }
 		public virtual DbSet<TBL_Configuration> TBL_Configuration { get; set; }
+		public virtual DbSet<AccountingPdfReport> AccountingPdfReports { get; set; }
 		public virtual DbSet<View_CertainAccountSelect> View_CertainAccountSelect { get; set; }
 		public virtual DbSet<DataTypeView> DataTypeViews { get; set; }
 		public virtual DbSet<RM_columnMetadata> RM_columnMetadata { get; set; }
