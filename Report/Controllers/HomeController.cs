@@ -76,7 +76,7 @@ namespace Report.Controllers
 		 //   "INNER JOIN Accounting.CertainAccount ON CertainAccount.CertainAccountId = AccountingDocumentDetail.CertainAccountId "+
 			//"INNER JOIN Accounting.TotalAccount ON TotalAccount.TotalAccountId = CertainAccount.TotalAccountId";
 
-		    var querySql = "SELECT [Description],[IsPermenant],[IsConfirmed],[بدهکار],[بستانکار],[معین],[کل],[تفصیلی] FROM [DecaFinancial].[dbo].[AccountingPdfReport]";
+		    var querySql = @"SELECT * FROM [DecaFinancial].[dbo].[AccountingPdfReport]";
 
 			var outputFilePath = report.AccountingReport(dbFirst,querySql);
 

@@ -98,11 +98,11 @@ namespace Report.Pdf.SampleReport
 					//if (!string.IsNullOrEmpty(sqlQuery))
 					//{
 					// TODO: repair
-					var model = new Deca();
+					//var model = new Deca();
 
-					string querySql = @"SELECT * FROM [DecaFinancial].[dbo].[AccountingPdfReport]";
+					//string querySql = @"SELECT * FROM [DecaFinancial].[dbo].[AccountingPdfReport]";
 
-					var db = model.Database.SqlQuery<AccountingPdfReport>(sql:querySql).ToList();
+					var db = modelDbContext.Database.SqlQuery<AccountingPdfReport>(sql: sqlQuery).ToList();
 					//}
 					//else
 					//{
@@ -179,18 +179,18 @@ namespace Report.Pdf.SampleReport
 						column.Order(5);
 						column.Width(2);
 						column.HeaderCell("بستانکار");
-						column.ColumnItemsTemplate(template =>
-						{
-							template.TextBlock();
-							template.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
-								? string.Empty : string.Format("{0:n0}", obj));
-						});
-						column.AggregateFunction(aggregateFunction =>
-						{
-							aggregateFunction.NumericAggregateFunction(AggregateFunction.Sum);
-							aggregateFunction.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
-								? string.Empty : string.Format("{0:n0}", obj));
-						});
+						//column.ColumnItemsTemplate(template =>
+						//{
+						//	template.TextBlock();
+						//	template.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
+						//		? string.Empty : $"{obj:n0}");
+						//});
+						//column.AggregateFunction(aggregateFunction =>
+						//{
+						//	aggregateFunction.NumericAggregateFunction(AggregateFunction.Sum);
+						//	aggregateFunction.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
+						//		? string.Empty : $"{obj:n0}");
+						//});
 					});
 
 					columns.AddColumn(column =>
@@ -201,18 +201,19 @@ namespace Report.Pdf.SampleReport
 						column.Order(6);
 						column.Width(2);
 						column.HeaderCell("بدهکار");
-						column.ColumnItemsTemplate(template =>
-						{
-							template.TextBlock();
-							template.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
-								? string.Empty : string.Format("{0:n0}", obj));
-						});
-						column.AggregateFunction(aggregateFunction =>
-						{
-							aggregateFunction.NumericAggregateFunction(AggregateFunction.Sum);
-							aggregateFunction.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
-								? string.Empty : string.Format("{0:n0}", obj));
-						});
+						//column.ColumnItemsTemplate(template =>
+						//{
+						//	template.TextBlock();
+						//	template.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
+						//		? string.Empty : $"{obj:n0}");
+						//});
+						//column.AggregateFunction(aggregateFunction =>
+						//{
+						//	aggregateFunction.NumericAggregateFunction(AggregateFunction.Sum);
+						//	aggregateFunction.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
+						//		? string.Empty : $"{obj:n0}");
+						//});
+
 					});
 
 					//columns.AddColumn(column =>
@@ -255,6 +256,20 @@ namespace Report.Pdf.SampleReport
 				.MainTableEvents(events =>
 				{
 					events.DataSourceIsEmpty(message: "There is no data available to display.");
+
+					events.CellCreated(args =>
+					{
+						if (args.CellType == CellType.PreviousPageSummaryCell ||
+						    args.CellType == CellType.PageSummaryCell ||
+						    args.CellType == CellType.SummaryRowCell)
+						{
+							if (!string.IsNullOrEmpty(args.Cell.RowData.FormattedValue) &&
+							    args.Cell.RowData.PropertyName == "Debtor")
+							{
+								args.Cell.RowData.FormattedValue += " $";
+							}
+						}
+					});
 				})
 				.Export(export =>
 				{
