@@ -102,7 +102,7 @@ namespace Report.Pdf.SampleReport
 
 					string querySql = @"SELECT * FROM [DecaFinancial].[dbo].[AccountingPdfReport]";
 
-					var db = model.Database.SqlQuery<AccountingPdfReport>(querySql).ToList();
+					var db = model.Database.SqlQuery<AccountingPdfReport>(sql:querySql).ToList();
 					//}
 					//else
 					//{
