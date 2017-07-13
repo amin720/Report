@@ -241,8 +241,8 @@
     <Compile Include="Pdf\InstallFonts.cs" />
     <Compile Include="Pdf\Pdf2Image.cs" />
     <Compile Include="Pdf\ConstructurePdfReport.cs" />
-    <Compile Include="Pdf\SampleReport\Group\Group.cs" />
-    <Compile Include="Pdf\SampleReport\Group\GroupingHeaders.cs" />
+    <Compile Include="Pdf\SampleReport\Grouping\AccGroup.cs" />
+    <Compile Include="Pdf\SampleReport\Grouping\HeaderGroup.cs" />
     <Compile Include="Pdf\SampleReport\Headers_Footers\Headers_Footers.cs" />
     <Compile Include="Pdf\SampleReport\Headers_Footers\Header_1\C1Header.cs" />
     <Compile Include="Pdf\SampleReport\Headers_Footers\Header_1\Program.cs" />

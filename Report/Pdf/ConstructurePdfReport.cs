@@ -9,6 +9,7 @@ using PdfRpt;
 using PdfRpt.Core.Contracts;
 using PdfRpt.Core.Helper;
 using Report.Pdf.SampleReport;
+using Report.Pdf.SampleReport.Grouping;
 using static Report.Pdf.Pdf2Image;
 using Font = iTextSharp.text.Font;
 
@@ -91,8 +92,8 @@ namespace Report.Pdf
 			_eFont = GetFont(EFont);
 
 			var watermarkFont = new GenericFontProvider(
-				System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\" + _pFont.ToString() + ".ttf"),
-				System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\" + _eFont.ToString() + ".ttf"))
+				System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\" + _pFont.Familyname + ".ttf"),
+				System.IO.Path.Combine(AppPath.ApplicationPath, "Pdf\\fonts\\" + _eFont.Familyname + ".ttf"))
 			{
 				Color = BaseColor.LIGHT_GRAY,
 				Size = 50
@@ -136,6 +137,22 @@ namespace Report.Pdf
 		public string AccountingReport(DbContext model = null, string sqlQuery = null, bool tempraryStatus = false)
 		{
 			var rpt = new InlineProvide().CreatePdfReport(model, sqlQuery, tempraryStatus);
+			var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
+			return outputFilePath;
+		}
+
+		/// <summary>
+		/// برای استفاده از کافی است خروجی را داخل 
+		/// Redirect
+		/// قرار دهید
+		/// </summary>
+		/// <param name="model">Callbacked Database</param>
+		/// <param name="sqlQuery"></param>
+		/// <param name="tempraryStatus">نمایش یا عدم نمایش شماره موقت</param>
+		/// <returns>یک رشته که مسیر فایل بعد از خروجی است مشخص میکند</returns>
+		public string AccountingReportGrouping(DbContext model = null, string sqlQuery = null, bool tempraryStatus = false)
+		{
+			var rpt = new AccGroup().CreatePdfReport(model, sqlQuery, tempraryStatus);
 			var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
 			return outputFilePath;
 		}

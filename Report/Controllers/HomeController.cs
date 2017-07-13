@@ -33,12 +33,6 @@ namespace Report.Controllers
 		    var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
 		    return Redirect(outputFilePath);
 	    }
-	    public ActionResult Group()
-	    {
-		    var rpt = new Group().CreatePdfReport();
-		    var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
-		    return Redirect(outputFilePath);
-	    }
 	    public ActionResult Headers()
 	    {
 		    var rpt = new Headers_Footers().CreatePdfReport();
@@ -66,21 +60,34 @@ namespace Report.Controllers
 				PageSize = PdfPageSize.A4,
 				Orientation = PageOrientation.Portrait
 			};
-		 //   var querySql = "SELECT AccountingDocument.Description,Debtor,Creditor"+
-			//    ", DetailedAccount.Code,DetailedAccount.Name" +
-			//    ",CertainAccount.Code,CertainAccount.Name" +
-			//    ",TotalAccount.Code,TotalAccount.Name " +
-			//    "FROM Accounting.AccountingDocument "+
-			//    "INNER JOIN Accounting.AccountingDocumentDetail ON AccountingDocumentDetail.AccountingDocumentId = AccountingDocument.AccountingDocumentId "+
-		 //   "INNER JOIN Accounting.DetailedAccount ON DetailedAccount.DetailedAccountId = AccountingDocumentDetail.DetailedAccountId "+
-		 //   "INNER JOIN Accounting.CertainAccount ON CertainAccount.CertainAccountId = AccountingDocumentDetail.CertainAccountId "+
-			//"INNER JOIN Accounting.TotalAccount ON TotalAccount.TotalAccountId = CertainAccount.TotalAccountId";
 
 		    var querySql = @"SELECT * FROM [DecaFinancial].[dbo].[AccountingPdfReport]";
 
 			var outputFilePath = report.AccountingReport(dbFirst,querySql);
 
 			return Redirect(outputFilePath);
+	    }
+
+	    public ActionResult Grouping()
+	    {
+		    var dbFirst = new DBFirst();
+
+		    var report = new Report.Pdf.ConstructurePdfReport()
+		    {
+			    Author = "Mohammad Amin Zeynali",
+			    Application = "Deca Provider",
+			    Keywords = "Accounting, Deca",
+			    Subject = "Report",
+			    Title = "Data",
+			    PageSize = PdfPageSize.A4,
+			    Orientation = PageOrientation.Portrait
+		    };
+
+		    var querySql = @"SELECT * FROM [DecaFinancial].[dbo].[AccountingPdfReport] ORDER BY OrganizationTitle";
+
+		    var outputFilePath = report.AccountingReportGrouping(dbFirst, querySql,tempraryStatus:true);
+
+		    return Redirect(outputFilePath);
 	    }
 
 	}

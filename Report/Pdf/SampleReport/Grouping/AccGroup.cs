@@ -10,9 +10,9 @@ using PdfRpt.FluentInterface;
 using Report.Models;
 using Reportig.Template;
 
-namespace Report.Pdf.SampleReport
+namespace Report.Pdf.SampleReport.Grouping
 {
-	class InlineProvide
+	public class AccGroup
 	{
 		private static readonly Report.Pdf.ConstructurePdfReport _report = new Report.Pdf.ConstructurePdfReport();
 
@@ -81,16 +81,9 @@ namespace Report.Pdf.SampleReport
 				})
 				.PagesHeader(header =>
 				{
+					var valDate = DateTime.Now.ToPersianDateTime(" / ", false);
 					header.CacheHeader(cache: true); // It's a default setting to improve the performance.
-					header.InlineHeader(inlineHeader =>
-					{
-						inlineHeader.AddPageHeader(data =>
-						{
-							var valDate = DateTime.Now.ToPersianDateTime(" / ", false);
-
-							return CreateHeader(header, valDate, modelDbContext, sqlQuery);
-						});
-					});
+					header.CustomHeader(new HeaderGroup { PdfRptFont = header.PdfFont, Header = header, Date = valDate,Temprary = tempraryStatus});
 				})
 				.MainTableTemplate(template =>
 				{
@@ -102,7 +95,22 @@ namespace Report.Pdf.SampleReport
 				.MainTablePreferences(table =>
 				{
 					table.ColumnsWidthsType(TableColumnWidthType.Relative);
-					table.NumberOfDataRowsPerPage(15);
+					table.GroupsPreferences(new GroupsPreferences
+					{
+						// آیا باید ستون‌های دخیل در گروه بندی، در گزارش نمایش داده شوند یا خیر
+						GroupType = GroupType.HideGroupingColumns,
+						// آیا سر ستون هر جدول، به ازای هر گروه باید تکرار شود؟ 
+						RepeatHeaderRowPerGroup = true,
+						//  آیا در هر صفحه یک گروه نمایش داده شود یا اینکه گروه‌ها به صورت متوالی در صفحات درج شوند
+						ShowOneGroupPerPage = true,
+						// فاصله جمع نهایی تمام گروه‌ها از آخرین گروه نمایش داده شده 
+						SpacingBeforeAllGroupsSummary = 5f,
+						// چه فاصله‌ای از انتهای صفحه، گروه جدیدی نباید درج شود و این گروه باید به صفحه بعدی منتقل شده و از آنجا شروع شود
+						NewGroupAvailableSpacingThreshold = 150,
+						SpacingAfterAllGroupsSummary = 5f
+					});
+					table.SpacingAfter(4f);
+					//table.NumberOfDataRowsPerPage(15);
 				})
 				.MainTableDataSource(dataSource =>
 				{
@@ -144,10 +152,34 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
+						column.PropertyName<AccountingPdfReport>(x => x.AccountingDocumentId);
+						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
+						column.Order(1);
+						column.Width(20);
+						column.Group((val1, val2) =>
+						{
+							return (int) val1 == (int) val2;
+						});
+					});
+
+					columns.AddColumn(column =>
+					{
+						column.PropertyName<AccountingPdfReport>(x => x.OrganizationTitle);
+						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
+						column.Order(2);
+						column.Width(20);
+						column.Group((val1, val2) =>
+						{
+							return val1.ToString() == val2.ToString();
+						});
+					});
+
+					columns.AddColumn(column =>
+					{
 						column.PropertyName<AccountingPdfReport>(x => x.Total);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
-						column.Order(1);
+						column.Order(3);
 						column.Width(2);
 						column.HeaderCell("حساب کل");
 					});
@@ -157,7 +189,7 @@ namespace Report.Pdf.SampleReport
 						column.PropertyName<AccountingPdfReport>(x => x.Certain);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
-						column.Order(2);
+						column.Order(4);
 						column.Width(2);
 						column.HeaderCell("حساب معین");
 					});
@@ -167,7 +199,7 @@ namespace Report.Pdf.SampleReport
 						column.PropertyName<AccountingPdfReport>(x => x.Detailed);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
-						column.Order(3);
+						column.Order(5);
 						column.Width(2);
 						column.HeaderCell("حساب تفصیلی");
 					});
@@ -177,7 +209,7 @@ namespace Report.Pdf.SampleReport
 						column.PropertyName<AccountingPdfReport>(x => x.Description);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
-						column.Order(4);
+						column.Order(6);
 						column.Width(4);
 						column.HeaderCell("شرح");
 					});
@@ -187,7 +219,7 @@ namespace Report.Pdf.SampleReport
 						column.PropertyName<AccountingPdfReport>(x => x.Debtor);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
-						column.Order(5);
+						column.Order(7);
 						column.Width(2);
 						column.HeaderCell("بستانکار");
 						column.ColumnItemsTemplate(template =>
@@ -209,7 +241,7 @@ namespace Report.Pdf.SampleReport
 						column.PropertyName<AccountingPdfReport>(x => x.Creditor);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
-						column.Order(6);
+						column.Order(8);
 						column.Width(2);
 						column.HeaderCell("بدهکار");
 						column.ColumnItemsTemplate(template =>
@@ -271,17 +303,17 @@ namespace Report.Pdf.SampleReport
 					events.CellCreated(args =>
 					{
 						if (args.CellType == CellType.PreviousPageSummaryCell ||
-							args.CellType == CellType.PageSummaryCell ||
-							args.CellType == CellType.SummaryRowCell)
+						    args.CellType == CellType.PageSummaryCell ||
+						    args.CellType == CellType.SummaryRowCell)
 						{
 							if (!string.IsNullOrEmpty(args.Cell.RowData.FormattedValue) &&
-								args.Cell.RowData.PropertyName == "Debtor")
+							    args.Cell.RowData.PropertyName == "Debtor")
 							{
 								args.Cell.RowData.FormattedValue += " ریال";
 							}
 
 							if (!string.IsNullOrEmpty(args.Cell.RowData.FormattedValue) &&
-								args.Cell.RowData.PropertyName == "Creditor")
+							    args.Cell.RowData.PropertyName == "Creditor")
 							{
 								args.Cell.RowData.FormattedValue += " ریال";
 							}
@@ -304,8 +336,8 @@ namespace Report.Pdf.SampleReport
 						var creditor = args.LastOverallAggregateValueOf<AccountingPdfReport>(y => y.Creditor);
 						var debtor = args.LastOverallAggregateValueOf<AccountingPdfReport>(y => y.Debtor);
 
-						var msgCreditor = $"مجموع بدهکار:  {creditor:n0} , \t" + double.Parse(creditor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) +" ریال";
-						var msgDebtor = $"مجموع بستانکار:  {debtor:n0} , \t" + double.Parse(debtor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian)+" ریال";
+						var msgCreditor = $"مجموع بدهکار:  {creditor:n0} , \t" + double.Parse(creditor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) + " ریال";
+						var msgDebtor = $"مجموع بستانکار:  {debtor:n0} , \t" + double.Parse(debtor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) + " ریال";
 
 						var infoTable = new PdfGrid(numColumns: 1)
 						{
@@ -404,238 +436,6 @@ namespace Report.Pdf.SampleReport
 				})
 				.Generate(data => data.AsPdfFile(
 					$"{Reportig.AppPath.ApplicationPath}\\Pdf\\InlineProvidersPdfReport-{Guid.NewGuid():N}.pdf"), debugMode: true);
-		}
-
-		private static PdfGrid CreateHeader(PagesHeaderBuilder header, string valDate, DbContext model, string querySQL)
-		{
-			var db = model.Database.SqlQuery<AccountingPdfReport>(sql: querySQL).ToList();
-
-			// todo: make state document
-			//var IsPermenant = db.sele
-
-			var table = new PdfGrid(numColumns: 3)
-			{
-				WidthPercentage = 100,
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				SpacingAfter = 25
-			};
-			table.DefaultCell.Border = Rectangle.NO_BORDER;
-
-			table.SetWidths(new int[] { 33, 33, 33 });
-
-			#region Table 1
-
-			var tb1 = new PdfPTable(numColumns: 2)
-			{
-				PaddingTop = 50,
-			};
-
-			tb1.DefaultCell.Top = 50;
-			tb1.DefaultCell.PaddingTop = 50;
-			tb1.DefaultCell.MinimumHeight = 60;
-			tb1.DefaultCell.Border = Rectangle.NO_BORDER;
-			tb1.DefaultCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-
-			var noMov = header.PdfFont.FontSelector.Process("شماره موقت:");
-			var valMov = header.PdfFont.FontSelector.Process("123214");
-			var noDae = header.PdfFont.FontSelector.Process("شماره دائم:");
-			var valDae = header.PdfFont.FontSelector.Process("12324");
-			var state = header.PdfFont.FontSelector.Process("وضعیت سند:");
-			var valState = header.PdfFont.FontSelector.Process("موقت");
-			var date = header.PdfFont.FontSelector.Process("تاریخ سند:");
-			var datePhrase = header.PdfFont.FontSelector.Process(valDate);
-
-			// todo: make state document
-			//if ()
-			//{
-
-			//}
-
-			if (_temprary)
-			{
-				tb1.AddCell(new PdfPCell(valMov)
-				{
-					RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-					Border = 0,
-					HorizontalAlignment = Element.ALIGN_CENTER,
-					Padding = 5,
-					PaddingTop = 13,
-
-				});
-				tb1.AddCell(new PdfPCell(noMov)
-				{
-					RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-					BorderWidth = 0,
-					HorizontalAlignment = Element.ALIGN_CENTER,
-					ArabicOptions = 1,
-					Padding = 5,
-					PaddingTop = 13,
-				});
-			}
-			
-			tb1.AddCell(new PdfPCell(valDae)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				Border = 0,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Padding = 5,
-
-			});
-			tb1.AddCell(new PdfPCell(noDae)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				BorderWidth = 0,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				ArabicOptions = 1,
-				Padding = 5,
-			});
-
-			tb1.AddCell(new PdfPCell(valState)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				Border = 0,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Padding = 5,
-
-			});
-			tb1.AddCell(new PdfPCell(state)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				BorderWidth = 0,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				ArabicOptions = 1,
-				Padding = 5,
-			});
-
-
-
-			tb1.AddCell(new PdfPCell(datePhrase)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_LTR,
-				Border = 0,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Padding = 5
-
-			});
-			tb1.AddCell(new PdfPCell(date)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				BorderWidth = 0,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Padding = 5
-
-			});
-
-			table.AddCell(new PdfPTable(tb1));
-
-			#endregion
-
-			#region Table 2
-
-			var tb2 = new PdfPTable(numColumns: 1);
-			tb2.DefaultCell.MinimumHeight = 60;
-			tb2.DefaultCell.Border = Rectangle.NO_BORDER;
-
-			var headerTitle = header;
-			var headerTitle2 = headerTitle;
-
-			//headerTitle.PdfFont.FontSelector.AddFont(font3);
-			headerTitle.PdfFont.Size = 25;
-			headerTitle.PdfFont.Style = DocumentFontStyle.Bold;
-
-
-
-			var nameCo = headerTitle.PdfFont.FontSelector.Process("نام سند");
-
-			tb2.AddCell(new PdfPCell(nameCo)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				BorderWidth = 0,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Top = 25,
-
-			});
-
-			headerTitle2.PdfFont.Size = 40;
-			headerTitle2.PdfFont.Style = DocumentFontStyle.Bold;
-
-			var nameDoc = headerTitle2.PdfFont.FontSelector.Process("نام شرکت");
-			tb2.AddCell(new PdfPCell(nameDoc)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				BorderWidth = 0,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				PaddingTop = 5,
-				PaddingBottom = 15
-			});
-			table.AddCell(new PdfPTable(tb2));
-
-
-			#endregion
-
-			#region Table 3
-
-			var tb3 = new PdfPTable(numColumns: 2);
-			tb3.DefaultCell.MinimumHeight = 30;
-			tb3.DefaultCell.Border = Rectangle.NO_BORDER;
-
-			header.PdfFont.Size = 9;
-			header.PdfFont.Style = DocumentFontStyle.Normal;
-
-			var docType = header.PdfFont.FontSelector.Process("نوع سند:");
-			var valType = header.PdfFont.FontSelector.Process("123214");
-
-
-
-			tb3.AddCell(new PdfPCell(valType)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				Border = 0,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Padding = 15,
-
-
-			});
-			tb3.AddCell(new PdfPCell(docType)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				BorderWidth = 0,
-				HorizontalAlignment = Element.ALIGN_RIGHT,
-				Padding = 15,
-			});
-
-			header.PdfFont.Size = 9;
-			header.PdfFont.Style = DocumentFontStyle.Normal;
-
-			var valDesc = header.PdfFont.FontSelector.Process("سلام خوبی منم خوبم \n راستی این برنامه جدید رو دیدی که \n دارن نرم افزار حسابداری درست میکنن");
-
-			tb3.AddCell(new PdfPCell(valDesc)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				Border = 0,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Padding = 10,
-			});
-
-			header.PdfFont.Size = 9;
-			var docDesc = header.PdfFont.FontSelector.Process("شرح سند:");
-
-
-			tb3.AddCell(new PdfPCell(docDesc)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				BorderWidth = 0,
-				HorizontalAlignment = Element.ALIGN_RIGHT,
-				Padding = 10,
-			});
-
-
-
-			table.AddCell(new PdfPTable(tb3));
-
-			#endregion
-
-			return table;
 		}
 
 		private static PdfGrid CreateFooter(PagesFooterBuilder footer, string date, FooterData data)
