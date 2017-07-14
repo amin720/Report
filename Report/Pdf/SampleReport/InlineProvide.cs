@@ -2,6 +2,8 @@
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Web;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using PdfRpt.Core.Contracts;
@@ -26,6 +28,12 @@ namespace Report.Pdf.SampleReport
 		{
 			_temprary = tempraryStatus;
 
+			//فعال سازی حالت InMemory
+			if (HttpContext.Current == null)
+				return null;
+
+			var fileName = $"test-{Guid.NewGuid().ToString("N")}-InlineProvidersPdfReport.pdf";
+
 			return new PdfReport().DocumentPreferences(doc =>
 				{
 					doc.RunDirection(PdfRunDirection.RightToLeft);
@@ -44,11 +52,18 @@ namespace Report.Pdf.SampleReport
 						EnableCompression = true,
 						EnableFullCompression = true
 					});
+					// Watermark
 					doc.DiagonalWatermark(new DiagonalWatermark()
 					{
 						Text = "تست می باشد",
 						RunDirection = PdfRunDirection.RightToLeft,
 						Font = _report.GetWatermarkFont()
+					});
+					// فرمان مستقیم برای چاپ
+					doc.PrintingPreferences(new PrintingPreferences()
+					{
+						ShowPrintDialogAutomatically = true,
+
 					});
 				})
 				.DefaultFonts(fonts =>
@@ -402,8 +417,11 @@ namespace Report.Pdf.SampleReport
 				{
 					export.ToExcel();
 				})
-				.Generate(data => data.AsPdfFile(
-					$"{Reportig.AppPath.ApplicationPath}\\Pdf\\InlineProvidersPdfReport-{Guid.NewGuid():N}.pdf"), debugMode: true);
+				.Generate(data =>
+				{
+					fileName = HttpUtility.UrlEncode(fileName, Encoding.UTF8);
+					data.FlushInBrowser(fileName, FlushType.Inline);
+				}); // creating an in-memory PDF file
 		}
 
 		private static PdfGrid CreateHeader(PagesHeaderBuilder header, string valDate, DbContext model, string querySQL)

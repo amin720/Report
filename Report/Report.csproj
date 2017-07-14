@@ -68,6 +68,7 @@
     <Reference Include="PdfRpt, Version=2.9.1.0, Culture=neutral, PublicKeyToken=9aed730b935239dd, processorArchitecture=MSIL">
       <HintPath>..\packages\PdfReport.2.9.1\lib\net45\PdfRpt.dll</HintPath>
     </Reference>
+    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
@@ -193,6 +194,7 @@
     <Compile Include="Models\VW_AccountingDocumentPrint.cs">
       <DependentUpon>Deca.tt</DependentUpon>
     </Compile>
+    <Compile Include="Pdf\AcroPrint.cs" />
     <Compile Include="Pdf\AppPath.cs" />
     <Compile Include="Pdf\InstallFonts.cs" />
     <Compile Include="Pdf\Pdf2Image.cs" />

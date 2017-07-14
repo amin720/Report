@@ -172,7 +172,7 @@ namespace Report.Pdf.SampleReport.Grouping
 			HeaderTitle2.PdfFont.Size = 36;
 			HeaderTitle2.PdfFont.Style = DocumentFontStyle.Bold;
 
-			var nameDoc = HeaderTitle2.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<VW_AccountingDocumentPrint>(x => x.OrganizationTitle));
+			var nameDoc = HeaderTitle2.PdfFont.FontSelector.Process("نام شرکت");
 			tb2.AddCell(new PdfPCell(nameDoc)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
@@ -220,7 +220,7 @@ namespace Report.Pdf.SampleReport.Grouping
 			Header.PdfFont.Size = 9;
 			Header.PdfFont.Style = DocumentFontStyle.Normal;
 
-			var valDesc = Header.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<VW_AccountingDocumentPrint>(x => x.Header));
+			var valDesc = Header.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<VW_AccountingDocumentPrint>(x => x.DocumentDescription));
 
 			tb3.AddCell(new PdfPCell(valDesc)
 			{

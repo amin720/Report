@@ -60,7 +60,7 @@ namespace Report.Controllers
 				Orientation = PageOrientation.Portrait
 			};
 
-		    var querySql = @"SELECT * FROM [DecaFinancial].[dbo].[VW_AccountingDocumentPrint] WHERE AccountingDocumentId = 3012";
+		    var querySql = @"SELECT * FROM [DecaFinancial].[Accounting].[VW_AccountingDocumentPrint]";
 
 			var outputFilePath = report.AccountingReport(dbFirst,querySql);
 
@@ -82,7 +82,7 @@ namespace Report.Controllers
 			    Orientation = PageOrientation.Portrait
 		    };
 
-		    var querySql = @"SELECT * FROM [DecaFinancial].[dbo].[VW_AccountingDocumentPrint] ORDER BY OrganizationTitle";
+		    var querySql = @"SELECT * FROM [DecaFinancial].[Accounting].[VW_AccountingDocumentPrint]";
 
 		    var outputFilePath = report.AccountingReportGrouping(dbFirst, querySql,tempraryStatus:true);
 
