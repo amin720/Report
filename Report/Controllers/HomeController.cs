@@ -6,7 +6,6 @@ using System.Web.Mvc;
 using System.Web.Services.Description;
 using PdfRpt.Core.Contracts;
 using Report.Models;
-using Report.Pdf.SampleReport.Group;
 using Report.Pdf.SampleReport.Headers_Footers;
 using Report.Pdf.SampleReport.InlineHeader;
 using Reportig;
@@ -61,7 +60,7 @@ namespace Report.Controllers
 				Orientation = PageOrientation.Portrait
 			};
 
-		    var querySql = @"SELECT * FROM [DecaFinancial].[dbo].[AccountingPdfReport]";
+		    var querySql = @"SELECT * FROM [DecaFinancial].[dbo].[VW_AccountingDocumentPrint] WHERE AccountingDocumentId = 3012";
 
 			var outputFilePath = report.AccountingReport(dbFirst,querySql);
 
@@ -83,7 +82,7 @@ namespace Report.Controllers
 			    Orientation = PageOrientation.Portrait
 		    };
 
-		    var querySql = @"SELECT * FROM [DecaFinancial].[dbo].[AccountingPdfReport] ORDER BY OrganizationTitle";
+		    var querySql = @"SELECT * FROM [DecaFinancial].[dbo].[VW_AccountingDocumentPrint] ORDER BY OrganizationTitle";
 
 		    var outputFilePath = report.AccountingReportGrouping(dbFirst, querySql,tempraryStatus:true);
 

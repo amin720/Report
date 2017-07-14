@@ -119,9 +119,9 @@ namespace Report.Pdf.SampleReport.Grouping
 					// TODO: repair
 					//var model = new Deca();
 
-					//string querySql = @"SELECT * FROM [DecaFinancial].[dbo].[AccountingPdfReport]";
+					//string querySql = @"SELECT * FROM [DecaFinancial].[dbo].[VW_AccountingDocumentPrint]";
 
-					var db = modelDbContext.Database.SqlQuery<AccountingPdfReport>(sql: sqlQuery).ToList();
+					var db = modelDbContext.Database.SqlQuery<VW_AccountingDocumentPrint>(sql: sqlQuery).ToList();
 					//}
 					//else
 					//{
@@ -152,7 +152,7 @@ namespace Report.Pdf.SampleReport.Grouping
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<AccountingPdfReport>(x => x.AccountingDocumentId);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.AccountingDocumentId);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.Order(1);
 						column.Width(20);
@@ -164,19 +164,7 @@ namespace Report.Pdf.SampleReport.Grouping
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<AccountingPdfReport>(x => x.OrganizationTitle);
-						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
-						column.Order(2);
-						column.Width(20);
-						column.Group((val1, val2) =>
-						{
-							return val1.ToString() == val2.ToString();
-						});
-					});
-
-					columns.AddColumn(column =>
-					{
-						column.PropertyName<AccountingPdfReport>(x => x.Total);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.TotalAccountName);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(3);
@@ -186,7 +174,7 @@ namespace Report.Pdf.SampleReport.Grouping
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<AccountingPdfReport>(x => x.Certain);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.CertainAccountName);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(4);
@@ -196,7 +184,7 @@ namespace Report.Pdf.SampleReport.Grouping
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<AccountingPdfReport>(x => x.Detailed);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.DetailedAccountName);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(5);
@@ -206,7 +194,7 @@ namespace Report.Pdf.SampleReport.Grouping
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<AccountingPdfReport>(x => x.Description);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.Description);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(6);
@@ -216,7 +204,7 @@ namespace Report.Pdf.SampleReport.Grouping
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<AccountingPdfReport>(x => x.Debtor);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.Debtor);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(7);
@@ -238,7 +226,7 @@ namespace Report.Pdf.SampleReport.Grouping
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<AccountingPdfReport>(x => x.Creditor);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.Creditor);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(8);
@@ -333,8 +321,8 @@ namespace Report.Pdf.SampleReport.Grouping
 							SpacingBefore = args.Table.SpacingBefore
 						}; // Create a clone of the MainTable's structure 
 
-						var creditor = args.LastOverallAggregateValueOf<AccountingPdfReport>(y => y.Creditor);
-						var debtor = args.LastOverallAggregateValueOf<AccountingPdfReport>(y => y.Debtor);
+						var creditor = args.LastOverallAggregateValueOf<VW_AccountingDocumentPrint>(y => y.Creditor);
+						var debtor = args.LastOverallAggregateValueOf<VW_AccountingDocumentPrint>(y => y.Debtor);
 
 						var msgCreditor = $"مجموع بدهکار:  {creditor:n0} , \t" + double.Parse(creditor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) + " ریال";
 						var msgDebtor = $"مجموع بستانکار:  {debtor:n0} , \t" + double.Parse(debtor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) + " ریال";

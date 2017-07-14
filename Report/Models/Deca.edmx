@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="DecaFinancialModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'DecaFinancial.Accounting.VW_AccountingDocumentPrint' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="VW_AccountingDocumentPrint">
+          <Key>
+            <PropertyRef Name="TotalAccountCode" />
+            <PropertyRef Name="TotalAccountName" />
+          </Key>
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="Debtor" Type="bigint" />
+          <Property Name="Creditor" Type="bigint" />
+          <Property Name="DocumentDescription" Type="nvarchar(max)" />
+          <Property Name="DocumentDate" Type="datetime" />
+          <Property Name="TemporaryDocumentNumber" Type="int" />
+          <Property Name="PermanantDocumentNumber" Type="int" />
+          <Property Name="IsPermenant" Type="bit" />
+          <Property Name="IsConfirmed" Type="bit" />
+          <Property Name="AccountingDocumentId" Type="int" />
+          <Property Name="DetailedAccountCode" Type="int" />
+          <Property Name="DetailedAccountName" Type="nvarchar" MaxLength="250" />
+          <Property Name="CertainAccountCode" Type="int" />
+          <Property Name="CertainAccountName" Type="nvarchar" MaxLength="250" />
+          <Property Name="TotalAccountCode" Type="int" Nullable="false" />
+          <Property Name="TotalAccountName" Type="nvarchar" MaxLength="250" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="DecaFinancialModelStoreContainer">
+          <EntitySet Name="VW_AccountingDocumentPrint" EntityType="Self.VW_AccountingDocumentPrint" store:Type="Views" store:Schema="Accounting">
+            <DefiningQuery>SELECT 
+    [VW_AccountingDocumentPrint].[Description] AS [Description], 
+    [VW_AccountingDocumentPrint].[Debtor] AS [Debtor], 
+    [VW_AccountingDocumentPrint].[Creditor] AS [Creditor], 
+    [VW_AccountingDocumentPrint].[DocumentDescription] AS [DocumentDescription], 
+    [VW_AccountingDocumentPrint].[DocumentDate] AS [DocumentDate], 
+    [VW_AccountingDocumentPrint].[TemporaryDocumentNumber] AS [TemporaryDocumentNumber], 
+    [VW_AccountingDocumentPrint].[PermanantDocumentNumber] AS [PermanantDocumentNumber], 
+    [VW_AccountingDocumentPrint].[IsPermenant] AS [IsPermenant], 
+    [VW_AccountingDocumentPrint].[IsConfirmed] AS [IsConfirmed], 
+    [VW_AccountingDocumentPrint].[AccountingDocumentId] AS [AccountingDocumentId], 
+    [VW_AccountingDocumentPrint].[DetailedAccountCode] AS [DetailedAccountCode], 
+    [VW_AccountingDocumentPrint].[DetailedAccountName] AS [DetailedAccountName], 
+    [VW_AccountingDocumentPrint].[CertainAccountCode] AS [CertainAccountCode], 
+    [VW_AccountingDocumentPrint].[CertainAccountName] AS [CertainAccountName], 
+    [VW_AccountingDocumentPrint].[TotalAccountCode] AS [TotalAccountCode], 
+    [VW_AccountingDocumentPrint].[TotalAccountName] AS [TotalAccountName]
+    FROM [Accounting].[VW_AccountingDocumentPrint] AS [VW_AccountingDocumentPrint]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DecaFinancialModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="VW_AccountingDocumentPrint">
+          <Key>
+            <PropertyRef Name="TotalAccountCode" />
+            <PropertyRef Name="TotalAccountName" />
+          </Key>
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Debtor" Type="Int64" />
+          <Property Name="Creditor" Type="Int64" />
+          <Property Name="DocumentDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DocumentDate" Type="DateTime" Precision="3" />
+          <Property Name="TemporaryDocumentNumber" Type="Int32" />
+          <Property Name="PermanantDocumentNumber" Type="Int32" />
+          <Property Name="IsPermenant" Type="Boolean" />
+          <Property Name="IsConfirmed" Type="Boolean" />
+          <Property Name="AccountingDocumentId" Type="Int32" />
+          <Property Name="DetailedAccountCode" Type="Int32" />
+          <Property Name="DetailedAccountName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="CertainAccountCode" Type="Int32" />
+          <Property Name="CertainAccountName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="TotalAccountCode" Type="Int32" Nullable="false" />
+          <Property Name="TotalAccountName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="DecaFinancialEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="VW_AccountingDocumentPrint" EntityType="Self.VW_AccountingDocumentPrint" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DecaFinancialModelStoreContainer" CdmEntityContainer="DecaFinancialEntities">
+          <EntitySetMapping Name="VW_AccountingDocumentPrint">
+            <EntityTypeMapping TypeName="DecaFinancialModel.VW_AccountingDocumentPrint">
+              <MappingFragment StoreEntitySet="VW_AccountingDocumentPrint">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Debtor" ColumnName="Debtor" />
+                <ScalarProperty Name="Creditor" ColumnName="Creditor" />
+                <ScalarProperty Name="DocumentDescription" ColumnName="DocumentDescription" />
+                <ScalarProperty Name="DocumentDate" ColumnName="DocumentDate" />
+                <ScalarProperty Name="TemporaryDocumentNumber" ColumnName="TemporaryDocumentNumber" />
+                <ScalarProperty Name="PermanantDocumentNumber" ColumnName="PermanantDocumentNumber" />
+                <ScalarProperty Name="IsPermenant" ColumnName="IsPermenant" />
+                <ScalarProperty Name="IsConfirmed" ColumnName="IsConfirmed" />
+                <ScalarProperty Name="AccountingDocumentId" ColumnName="AccountingDocumentId" />
+                <ScalarProperty Name="DetailedAccountCode" ColumnName="DetailedAccountCode" />
+                <ScalarProperty Name="DetailedAccountName" ColumnName="DetailedAccountName" />
+                <ScalarProperty Name="CertainAccountCode" ColumnName="CertainAccountCode" />
+                <ScalarProperty Name="CertainAccountName" ColumnName="CertainAccountName" />
+                <ScalarProperty Name="TotalAccountCode" ColumnName="TotalAccountCode" />
+                <ScalarProperty Name="TotalAccountName" ColumnName="TotalAccountName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

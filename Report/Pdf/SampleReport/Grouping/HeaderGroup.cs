@@ -17,8 +17,8 @@ namespace Report.Pdf.SampleReport.Grouping
 		public bool Temprary { get; set; }
 		public PdfGrid RenderingGroupHeader(Document pdfDoc, PdfWriter pdfWriter, IList<CellData> newGroupInfo, IList<SummaryCellData> summaryData)
 		{
-			var IsPermenant = (bool)newGroupInfo.GetValueOf<AccountingPdfReport>(x => x.IsPermenant);
-			var IsConfirmed = (bool)newGroupInfo.GetValueOf<AccountingPdfReport>(x => x.IsConfirmed);
+			var IsPermenant = (bool)newGroupInfo.GetValueOf<VW_AccountingDocumentPrint>(x => x.IsPermenant);
+			var IsConfirmed = (bool)newGroupInfo.GetValueOf<VW_AccountingDocumentPrint>(x => x.IsConfirmed);
 
 			var table = new PdfGrid(numColumns: 3)
 			{
@@ -44,9 +44,9 @@ namespace Report.Pdf.SampleReport.Grouping
 			tb1.DefaultCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
 
 			var noMov = Header.PdfFont.FontSelector.Process("شماره موقت:");
-			var valMov = Header.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<AccountingPdfReport>(x => x.TemporaryDocumentNumber));
+			var valMov = Header.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<VW_AccountingDocumentPrint>(x => x.TemporaryDocumentNumber));
 			var noDae = Header.PdfFont.FontSelector.Process("شماره دائم:");
-			var valDae = Header.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<AccountingPdfReport>(x => x.PermanantDocumentNumber));
+			var valDae = Header.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<VW_AccountingDocumentPrint>(x => x.PermanantDocumentNumber));
 			var state = Header.PdfFont.FontSelector.Process("وضعیت سند:");
 			var valState = Header.PdfFont.FontSelector.Process(string.Empty);
 
@@ -172,7 +172,7 @@ namespace Report.Pdf.SampleReport.Grouping
 			HeaderTitle2.PdfFont.Size = 36;
 			HeaderTitle2.PdfFont.Style = DocumentFontStyle.Bold;
 
-			var nameDoc = HeaderTitle2.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<AccountingPdfReport>(x => x.OrganizationTitle));
+			var nameDoc = HeaderTitle2.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<VW_AccountingDocumentPrint>(x => x.OrganizationTitle));
 			tb2.AddCell(new PdfPCell(nameDoc)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
@@ -220,7 +220,7 @@ namespace Report.Pdf.SampleReport.Grouping
 			Header.PdfFont.Size = 9;
 			Header.PdfFont.Style = DocumentFontStyle.Normal;
 
-			var valDesc = Header.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<AccountingPdfReport>(x => x.Header));
+			var valDesc = Header.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<VW_AccountingDocumentPrint>(x => x.Header));
 
 			tb3.AddCell(new PdfPCell(valDesc)
 			{

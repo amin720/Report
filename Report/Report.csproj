@@ -130,6 +130,16 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Models\Deca.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Deca.edmx</DependentUpon>
+      <LastGenOutput>Deca.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\Deca.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Deca.edmx</DependentUpon>
+      <LastGenOutput>Deca.cs</LastGenOutput>
+    </Content>
     <Content Include="Pdf\Data\headerDoc.odt" />
     <Content Include="Pdf\Data\headerDoc.pdf" />
     <Content Include="Pdf\fonts\Arial.ttf" />
@@ -138,6 +148,13 @@
     <Content Include="Pdf\fonts\Calibri.ttf" />
     <Content Include="Pdf\fonts\IranianSans.ttf" />
     <Content Include="Pdf\fonts\Tahoma.ttf" />
+    <EntityDeploy Include="Models\Deca.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Deca.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\Deca.edmx.diagram">
+      <DependentUpon>Deca.edmx</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Pdf\Images\01.png" />
     <Content Include="Scripts\bootstrap.js" />
@@ -153,90 +170,29 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\AccountingDocument.cs" />
-    <Compile Include="Models\AccountingDocumentDetail.cs" />
-    <Compile Include="Models\AccountingDocumentType.cs" />
-    <Compile Include="Models\AccountingPdfReport.cs" />
-    <Compile Include="Models\AccountingYear.cs" />
-    <Compile Include="Models\AccountKind.cs" />
-    <Compile Include="Models\AccountNature.cs" />
-    <Compile Include="Models\Center.cs" />
-    <Compile Include="Models\CertainAccount.cs" />
-    <Compile Include="Models\CertainAccountType.cs" />
-    <Compile Include="Models\City.cs" />
-    <Compile Include="Models\Country.cs" />
-    <Compile Include="Models\Currency.cs" />
-    <Compile Include="Models\DataTypeView.cs" />
     <Compile Include="Models\DBFirst.cs" />
-    <Compile Include="Models\Deca.cs" />
+    <Compile Include="Models\Deca.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Deca.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Deca.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Deca.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Deca.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Deca.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\Department.cs" />
-    <Compile Include="Models\DetailedAccount.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\Gender.cs" />
-    <Compile Include="Models\GroupAccount.cs" />
-    <Compile Include="Models\GroupAccountType.cs" />
     <Compile Include="Models\Manager.cs" />
-    <Compile Include="Models\RM_columnMetadata.cs" />
-    <Compile Include="Models\RM_GetForeignKey.cs" />
-    <Compile Include="Models\RM_GetPrimaryKey.cs" />
-    <Compile Include="Models\RM_TableDescription.cs" />
-    <Compile Include="Models\RM_TableFieldsInfo.cs" />
-    <Compile Include="Models\RM_TableViewFieldsInfo.cs" />
-    <Compile Include="Models\RM_TableViewFieldsInfo_WithoutFarsiTitle.cs" />
-    <Compile Include="Models\RM_ViewFeildsInfo.cs" />
-    <Compile Include="Models\RM_ViewFieldsInfo.cs" />
-    <Compile Include="Models\sysdiagram.cs" />
-    <Compile Include="Models\TBL_Application.cs" />
-    <Compile Include="Models\TBL_ApplicationActiveTime.cs" />
-    <Compile Include="Models\TBL_ApplicationIPValid.cs" />
-    <Compile Include="Models\TBL_Application_REL_Resource.cs" />
-    <Compile Include="Models\TBL_Configuration.cs" />
-    <Compile Include="Models\TBL_ErrorMessages.cs" />
-    <Compile Include="Models\TBL_Language.cs" />
-    <Compile Include="Models\TBL_Lookup_AuditType.cs" />
-    <Compile Include="Models\TBL_Lookup_DataAccessLevelType.cs" />
-    <Compile Include="Models\TBL_Lookup_OrganizationPositionType.cs" />
-    <Compile Include="Models\TBL_Lookup_ResourceType.cs" />
-    <Compile Include="Models\TBL_Messages.cs" />
-    <Compile Include="Models\TBL_OrganizationPosition.cs" />
-    <Compile Include="Models\TBL_OrganizationUnit.cs" />
-    <Compile Include="Models\TBL_Person.cs" />
-    <Compile Include="Models\TBL_PersonOrganizationPosition.cs" />
-    <Compile Include="Models\TBL_Resource.cs" />
-    <Compile Include="Models\TBL_ResourceAuditType.cs" />
-    <Compile Include="Models\TBL_ResourceTypeAuditType.cs" />
-    <Compile Include="Models\TBL_Role.cs" />
-    <Compile Include="Models\TBL_RoleAccessToResource.cs" />
-    <Compile Include="Models\TBL_Role_Resource_Auditing.cs" />
-    <Compile Include="Models\TBL_Token.cs" />
-    <Compile Include="Models\TBL_User.cs" />
-    <Compile Include="Models\TBL_UserAccessToResource.cs" />
-    <Compile Include="Models\TBL_UserAccessToResourceData.cs" />
-    <Compile Include="Models\TBL_UserActiveTime.cs" />
-    <Compile Include="Models\TBL_UserRole.cs" />
-    <Compile Include="Models\TBL_User_Resource_Auditing.cs" />
-    <Compile Include="Models\TotalAccount.cs" />
-    <Compile Include="Models\TotalAccountType.cs" />
-    <Compile Include="Models\View_CertainAccountSelect.cs" />
-    <Compile Include="Models\VW_AllTablesRelationsInfo.cs" />
-    <Compile Include="Models\VW_ApplicationResources.cs" />
-    <Compile Include="Models\VW_DataBaseResource.cs" />
-    <Compile Include="Models\VW_M2M_PersonOrganizationPosition.cs" />
-    <Compile Include="Models\VW_M2M_ResourceAuditType.cs" />
-    <Compile Include="Models\VW_M2M_User_REL_Role.cs" />
-    <Compile Include="Models\VW_Resource.cs" />
-    <Compile Include="Models\VW_RM_GetForeignKey.cs" />
-    <Compile Include="Models\VW_RM_SystemTables.cs" />
-    <Compile Include="Models\VW_SystemColumns.cs" />
-    <Compile Include="Models\VW_SystemTables.cs" />
-    <Compile Include="Models\VW_SystemTypes.cs" />
-    <Compile Include="Models\VW_SystemViews.cs" />
-    <Compile Include="Models\VW_TableFieldInfoView.cs" />
-    <Compile Include="Models\VW_TablesRelationInfo.cs" />
-    <Compile Include="Models\VW_TablesViews.cs" />
-    <Compile Include="Models\VW_UserAccessToMenu.cs" />
-    <Compile Include="Models\VW_UserAccessToResource.cs" />
-    <Compile Include="Models\VW_User_Organization.cs" />
+    <Compile Include="Models\VW_AccountingDocumentPrint.cs">
+      <DependentUpon>Deca.tt</DependentUpon>
+    </Compile>
     <Compile Include="Pdf\AppPath.cs" />
     <Compile Include="Pdf\InstallFonts.cs" />
     <Compile Include="Pdf\Pdf2Image.cs" />
@@ -282,6 +238,9 @@
       <Project>{238a818c-742d-4be1-af4a-3ca8c1becbd8}</Project>
       <Name>Reportig</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
