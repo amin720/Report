@@ -1,4 +1,7 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.IO;
 using System.Windows.Forms;
 using System.Web;
 using iTextSharp;
@@ -34,19 +37,24 @@ namespace Report.Pdf
 	}
 
 	#endregion
+
 	public class ConstructurePdfReport
 	{
 		private Font _pFont;
 		private Font _eFont;
+
 		public ConstructurePdfReport() : this(PersianFont.BNazanin, EnglishFont.Calibri)
 		{
 
 		}
+
 		public ConstructurePdfReport(PersianFont persianFont, EnglishFont englishFont)
 		{
 			PFont = persianFont;
 			EFont = englishFont;
 		}
+
+		#region Properties
 
 		public PersianFont PFont { get; set; }
 		public EnglishFont EFont { get; set; }
@@ -57,6 +65,9 @@ namespace Report.Pdf
 		public string Title { get; set; }
 		public PdfPageSize PageSize { get; set; }
 		public PageOrientation Orientation { get; set; }
+
+		#endregion
+
 
 		#region InstallFonts
 
@@ -125,6 +136,7 @@ namespace Report.Pdf
 		#endregion
 
 		#region Accounting
+
 		/// <summary>
 		/// برای استفاده از کافی است خروجی را داخل 
 		/// Redirect
@@ -155,6 +167,47 @@ namespace Report.Pdf
 			var rpt = new AccGroup().CreatePdfReport(model, sqlQuery, tempraryStatus);
 			var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
 			return outputFilePath;
+		}
+
+		#endregion
+
+		#region Printing&MergingPdfs
+
+		public void Merge_Printing(List<string> inFiles, string outFile)
+		{
+
+			using (FileStream stream = new FileStream(outFile, FileMode.Create))
+			using (Document doc = new Document())
+			using (PdfCopy pdf = new PdfCopy(doc, stream))
+			{
+				doc.Open();
+
+				PdfReader reader = null;
+				PdfImportedPage page = null;
+
+				//fixed typo
+				inFiles.ForEach(file =>
+				{
+					reader = new PdfReader(file);
+
+					for (int i = 0; i < reader.NumberOfPages; i++)
+					{
+						page = pdf.GetImportedPage(reader, i + 1);
+						pdf.AddPage(page);
+					}
+
+					pdf.FreeReader(reader);
+					reader.Close();
+					File.Delete(file);
+				});
+			}
+			var print = new AcroPrint()
+			{
+				PdfFilePath = outFile,
+				PrinterName = "Adobe PDF"
+			};
+
+			print.PrintPdfFile();
 		}
 
 		#endregion

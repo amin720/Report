@@ -89,5 +89,35 @@ namespace Report.Controllers
 		    return Redirect(outputFilePath);
 	    }
 
+	    public ActionResult Printing()
+	    {
+		    var report = new Report.Pdf.ConstructurePdfReport();
+
+		    var files = new List<string>
+		    {
+			    AppPath.ApplicationPath + "Pdf\\1 (1).pdf",
+			    AppPath.ApplicationPath + "Pdf\\1 (2).pdf",
+			    AppPath.ApplicationPath + "Pdf\\1 (3).pdf",
+			    AppPath.ApplicationPath + "Pdf\\1 (4).pdf",
+			    AppPath.ApplicationPath + "Pdf\\1 (5).pdf",
+			    AppPath.ApplicationPath + "Pdf\\1 (6).pdf",
+			    AppPath.ApplicationPath + "Pdf\\1 (7).pdf",
+			    AppPath.ApplicationPath + "Pdf\\1 (8).pdf",
+			    AppPath.ApplicationPath + "Pdf\\1 (9).pdf",
+			    AppPath.ApplicationPath + "Pdf\\1 (10).pdf"
+		    };
+
+
+		    string outFile = AppPath.ApplicationPath + "Pdf\\Data\\test.pdf";
+
+
+			report.Merge_Printing(inFiles: files, outFile: outFile);
+
+
+			//var outputFilePath = report.AccountingReportGrouping(dbFirst, querySql, tempraryStatus: true);
+
+		    return RedirectToAction("Index");
+	    }
+
 	}
 }
