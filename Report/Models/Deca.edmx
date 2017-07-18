@@ -4,14 +4,14 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="DecaFinancialModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="DecaFinancialModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <!--Errors Found During Generation:
 warning 6002: The table/view 'DecaFinancial.Accounting.VW_AccountingDocumentPrint' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="VW_AccountingDocumentPrint">
           <Key>
-            <PropertyRef Name="TotalAccountCode" />
-            <PropertyRef Name="TotalAccountName" />
+            <PropertyRef Name="ID" />
           </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" />
           <Property Name="Debtor" Type="bigint" />
           <Property Name="Creditor" Type="bigint" />
@@ -22,16 +22,18 @@ warning 6002: The table/view 'DecaFinancial.Accounting.VW_AccountingDocumentPrin
           <Property Name="IsPermenant" Type="bit" />
           <Property Name="IsConfirmed" Type="bit" />
           <Property Name="AccountingDocumentId" Type="int" />
-          <Property Name="DetailedAccountCode" Type="int" />
-          <Property Name="DetailedAccountName" Type="nvarchar" MaxLength="250" />
-          <Property Name="CertainAccountCode" Type="int" />
-          <Property Name="CertainAccountName" Type="nvarchar" MaxLength="250" />
-          <Property Name="TotalAccountCode" Type="int" Nullable="false" />
-          <Property Name="TotalAccountName" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="DetailedAccount" Type="nvarchar" MaxLength="273" />
+          <Property Name="CertainAccount" Type="nvarchar" MaxLength="273" />
+          <Property Name="TotalAccount" Type="nvarchar" MaxLength="273" />
+          <Property Name="DocumentType" Type="nvarchar(max)" />
         </EntityType>
+        <Function Name="GetColumnsOfTable" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="metadata">
+          <Parameter Name="TableName" Type="nvarchar" Mode="In" />
+        </Function>
         <EntityContainer Name="DecaFinancialModelStoreContainer">
           <EntitySet Name="VW_AccountingDocumentPrint" EntityType="Self.VW_AccountingDocumentPrint" store:Type="Views" store:Schema="Accounting">
             <DefiningQuery>SELECT 
+    [VW_AccountingDocumentPrint].[ID] AS [ID], 
     [VW_AccountingDocumentPrint].[Description] AS [Description], 
     [VW_AccountingDocumentPrint].[Debtor] AS [Debtor], 
     [VW_AccountingDocumentPrint].[Creditor] AS [Creditor], 
@@ -42,25 +44,28 @@ warning 6002: The table/view 'DecaFinancial.Accounting.VW_AccountingDocumentPrin
     [VW_AccountingDocumentPrint].[IsPermenant] AS [IsPermenant], 
     [VW_AccountingDocumentPrint].[IsConfirmed] AS [IsConfirmed], 
     [VW_AccountingDocumentPrint].[AccountingDocumentId] AS [AccountingDocumentId], 
-    [VW_AccountingDocumentPrint].[DetailedAccountCode] AS [DetailedAccountCode], 
-    [VW_AccountingDocumentPrint].[DetailedAccountName] AS [DetailedAccountName], 
-    [VW_AccountingDocumentPrint].[CertainAccountCode] AS [CertainAccountCode], 
-    [VW_AccountingDocumentPrint].[CertainAccountName] AS [CertainAccountName], 
-    [VW_AccountingDocumentPrint].[TotalAccountCode] AS [TotalAccountCode], 
-    [VW_AccountingDocumentPrint].[TotalAccountName] AS [TotalAccountName]
+    [VW_AccountingDocumentPrint].[DetailedAccount] AS [DetailedAccount], 
+    [VW_AccountingDocumentPrint].[CertainAccount] AS [CertainAccount], 
+    [VW_AccountingDocumentPrint].[TotalAccount] AS [TotalAccount], 
+    [VW_AccountingDocumentPrint].[DocumentType] AS [DocumentType]
     FROM [Accounting].[VW_AccountingDocumentPrint] AS [VW_AccountingDocumentPrint]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DecaFinancialModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="DecaFinancialEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="VW_AccountingDocumentPrint" EntityType="DecaFinancialModel.VW_AccountingDocumentPrint" />
+          <FunctionImport Name="GetColumnsOfTable" ReturnType="Collection(DecaFinancialModel.GetColumnsOfTable_Result)">
+            <Parameter Name="TableName" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
         <EntityType Name="VW_AccountingDocumentPrint">
           <Key>
-            <PropertyRef Name="TotalAccountCode" />
-            <PropertyRef Name="TotalAccountName" />
+            <PropertyRef Name="ID" />
           </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Debtor" Type="Int64" />
           <Property Name="Creditor" Type="Int64" />
@@ -71,16 +76,18 @@ warning 6002: The table/view 'DecaFinancial.Accounting.VW_AccountingDocumentPrin
           <Property Name="IsPermenant" Type="Boolean" />
           <Property Name="IsConfirmed" Type="Boolean" />
           <Property Name="AccountingDocumentId" Type="Int32" />
-          <Property Name="DetailedAccountCode" Type="Int32" />
-          <Property Name="DetailedAccountName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="CertainAccountCode" Type="Int32" />
-          <Property Name="CertainAccountName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="TotalAccountCode" Type="Int32" Nullable="false" />
-          <Property Name="TotalAccountName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DetailedAccount" Type="String" MaxLength="273" FixedLength="false" Unicode="true" />
+          <Property Name="CertainAccount" Type="String" MaxLength="273" FixedLength="false" Unicode="true" />
+          <Property Name="TotalAccount" Type="String" MaxLength="273" FixedLength="false" Unicode="true" />
+          <Property Name="DocumentType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityContainer Name="DecaFinancialEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="VW_AccountingDocumentPrint" EntityType="Self.VW_AccountingDocumentPrint" />
-        </EntityContainer>
+        <ComplexType Name="GetColumnsOfTable_Result">
+          <Property Type="String" Name="ColumnName" Nullable="true" MaxLength="128" />
+          <Property Type="Int32" Name="ColumnID" Nullable="false" />
+          <Property Type="Int32" Name="TableID" Nullable="false" />
+          <Property Type="String" Name="TableName" Nullable="false" MaxLength="128" />
+          <Property Type="String" Name="DBTypeName" Nullable="false" MaxLength="128" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -90,25 +97,35 @@ warning 6002: The table/view 'DecaFinancial.Accounting.VW_AccountingDocumentPrin
           <EntitySetMapping Name="VW_AccountingDocumentPrint">
             <EntityTypeMapping TypeName="DecaFinancialModel.VW_AccountingDocumentPrint">
               <MappingFragment StoreEntitySet="VW_AccountingDocumentPrint">
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Debtor" ColumnName="Debtor" />
-                <ScalarProperty Name="Creditor" ColumnName="Creditor" />
-                <ScalarProperty Name="DocumentDescription" ColumnName="DocumentDescription" />
-                <ScalarProperty Name="DocumentDate" ColumnName="DocumentDate" />
-                <ScalarProperty Name="TemporaryDocumentNumber" ColumnName="TemporaryDocumentNumber" />
-                <ScalarProperty Name="PermanantDocumentNumber" ColumnName="PermanantDocumentNumber" />
-                <ScalarProperty Name="IsPermenant" ColumnName="IsPermenant" />
-                <ScalarProperty Name="IsConfirmed" ColumnName="IsConfirmed" />
+                <ScalarProperty Name="DocumentType" ColumnName="DocumentType" />
+                <ScalarProperty Name="TotalAccount" ColumnName="TotalAccount" />
+                <ScalarProperty Name="CertainAccount" ColumnName="CertainAccount" />
+                <ScalarProperty Name="DetailedAccount" ColumnName="DetailedAccount" />
                 <ScalarProperty Name="AccountingDocumentId" ColumnName="AccountingDocumentId" />
-                <ScalarProperty Name="DetailedAccountCode" ColumnName="DetailedAccountCode" />
-                <ScalarProperty Name="DetailedAccountName" ColumnName="DetailedAccountName" />
-                <ScalarProperty Name="CertainAccountCode" ColumnName="CertainAccountCode" />
-                <ScalarProperty Name="CertainAccountName" ColumnName="CertainAccountName" />
-                <ScalarProperty Name="TotalAccountCode" ColumnName="TotalAccountCode" />
-                <ScalarProperty Name="TotalAccountName" ColumnName="TotalAccountName" />
+                <ScalarProperty Name="IsConfirmed" ColumnName="IsConfirmed" />
+                <ScalarProperty Name="IsPermenant" ColumnName="IsPermenant" />
+                <ScalarProperty Name="PermanantDocumentNumber" ColumnName="PermanantDocumentNumber" />
+                <ScalarProperty Name="TemporaryDocumentNumber" ColumnName="TemporaryDocumentNumber" />
+                <ScalarProperty Name="DocumentDate" ColumnName="DocumentDate" />
+                <ScalarProperty Name="DocumentDescription" ColumnName="DocumentDescription" />
+                <ScalarProperty Name="Creditor" ColumnName="Creditor" />
+                <ScalarProperty Name="Debtor" ColumnName="Debtor" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetColumnsOfTable" FunctionName="DecaFinancialModel.Store.GetColumnsOfTable">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DecaFinancialModel.GetColumnsOfTable_Result">
+                <ScalarProperty Name="ColumnName" ColumnName="ColumnName" />
+                <ScalarProperty Name="ColumnID" ColumnName="ColumnID" />
+                <ScalarProperty Name="TableID" ColumnName="TableID" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="DBTypeName" ColumnName="DBTypeName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

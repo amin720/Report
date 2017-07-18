@@ -14,6 +14,7 @@ namespace Report.Models
     
     public partial class VW_AccountingDocumentPrint
     {
+        public int ID { get; set; }
         public string Description { get; set; }
         public Nullable<long> Debtor { get; set; }
         public Nullable<long> Creditor { get; set; }
@@ -24,11 +25,9 @@ namespace Report.Models
         public Nullable<bool> IsPermenant { get; set; }
         public Nullable<bool> IsConfirmed { get; set; }
         public Nullable<int> AccountingDocumentId { get; set; }
-        public Nullable<int> DetailedAccountCode { get; set; }
-        public string DetailedAccountName { get; set; }
-        public Nullable<int> CertainAccountCode { get; set; }
-        public string CertainAccountName { get; set; }
-        public int TotalAccountCode { get; set; }
-        public string TotalAccountName { get; set; }
+        public string DetailedAccount { get; set; }
+        public string CertainAccount { get; set; }
+        public string TotalAccount { get; set; }
+        public string DocumentType { get; set; }
     }
 }

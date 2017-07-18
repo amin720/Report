@@ -12,6 +12,8 @@ namespace Report.Models
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class DecaFinancialEntities : DbContext
     {
@@ -26,5 +28,14 @@ namespace Report.Models
         }
     
         public virtual DbSet<VW_AccountingDocumentPrint> VW_AccountingDocumentPrint { get; set; }
+    
+        public virtual ObjectResult<GetColumnsOfTable_Result> GetColumnsOfTable(string tableName)
+        {
+            var tableNameParameter = tableName != null ?
+                new ObjectParameter("TableName", tableName) :
+                new ObjectParameter("TableName", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetColumnsOfTable_Result>("GetColumnsOfTable", tableNameParameter);
+        }
     }
 }

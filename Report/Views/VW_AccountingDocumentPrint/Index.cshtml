@@ -1,0 +1,125 @@
+﻿@*@model IEnumerable<Report.Models.VW_AccountingDocumentPrint>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Debtor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Creditor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DocumentDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DocumentDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TemporaryDocumentNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PermanantDocumentNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsPermenant)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsConfirmed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccountingDocumentId)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.DetailedAccountCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DetailedAccountName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CertainAccountCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CertainAccountName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DocumentType)
+            </th>
+            <th></th>
+        </tr>
+    
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Debtor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Creditor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DocumentDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DocumentDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TemporaryDocumentNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PermanantDocumentNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsPermenant)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsConfirmed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountingDocumentId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DetailedAccountCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DetailedAccountName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CertainAccountCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CertainAccountName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DocumentType)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+    }
+    
+    </table>
+</body>
+</html>*@

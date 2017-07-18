@@ -63,11 +63,36 @@ namespace Report.Pdf
 		public string Keywords { get; set; }
 		public string Subject { get; set; }
 		public string Title { get; set; }
+		/// <summary>
+		/// اندازه کاغذ را مشخص کنید
+		/// </summary>
 		public PdfPageSize PageSize { get; set; }
+		/// <summary>
+		/// عمودی یا افقی بودن سند را مشخص کنید
+		/// </summary>
 		public PageOrientation Orientation { get; set; }
+		/// <summary>
+		/// شخص تایید کننده
+		/// </summary>
+		public string Confirmatory { get; set; }
+		/// <summary>
+		/// شخص تنظیم کننده
+		/// </summary>
+		public string Regulator { get; set; }
+		/// <summary>
+		/// مدیر مالی
+		/// </summary>
+		public string FinancialMaanager { get; set; }
+		/// <summary>
+		/// نوع سند را مشخص کنید برای مثال سند حسابداری
+		/// </summary>
+		public string DocumentName { get; set; }
+		/// <summary>
+		/// نام شرکت مرتبط را وارد کنید
+		/// </summary>
+		public string CompanyName { get; set; }
 
 		#endregion
-
 
 		#region InstallFonts
 
@@ -96,7 +121,10 @@ namespace Report.Pdf
 		#endregion
 
 		#region Watermark
-
+		/// <summary>
+		/// قلم برای نوشته پس زمینه صفحه
+		/// </summary>
+		/// <returns>یک قلم استاندارد</returns>
 		public IPdfFont GetWatermarkFont()
 		{
 			_pFont = GetFont(PFont);
@@ -142,13 +170,14 @@ namespace Report.Pdf
 		/// Redirect
 		/// قرار دهید
 		/// </summary>
-		/// <param name="model">Callbacked Database</param>
-		/// <param name="sqlQuery"></param>
+		/// <param name="report"></param>
 		/// <param name="tempraryStatus">نمایش یا عدم نمایش شماره موقت</param>
+		/// <param name="sqlQuery"></param>
+		/// <param name="model">Callbacked Database</param>
 		/// <returns>یک رشته که مسیر فایل بعد از خروجی است مشخص میکند</returns>
-		public string AccountingReport(DbContext model = null, string sqlQuery = null, bool tempraryStatus = false)
+		public string AccountingReport(ConstructurePdfReport report, bool tempraryStatus = false, string sqlQuery = null, DbContext model = null)
 		{
-			var rpt = new InlineProvide().CreatePdfReport(model, sqlQuery, tempraryStatus);
+			var rpt = new InlineProvide().CreatePdfReport(report, model, sqlQuery, tempraryStatus);
 			var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
 			return outputFilePath;
 		}
@@ -162,9 +191,9 @@ namespace Report.Pdf
 		/// <param name="sqlQuery"></param>
 		/// <param name="tempraryStatus">نمایش یا عدم نمایش شماره موقت</param>
 		/// <returns>یک رشته که مسیر فایل بعد از خروجی است مشخص میکند</returns>
-		public string AccountingReportGrouping(DbContext model = null, string sqlQuery = null, bool tempraryStatus = false)
+		public string AccountingReportGrouping(ConstructurePdfReport report, DbContext model = null, string sqlQuery = null, bool tempraryStatus = false)
 		{
-			var rpt = new AccGroup().CreatePdfReport(model, sqlQuery, tempraryStatus);
+			var rpt = new AccGroup().CreatePdfReport(report, model, sqlQuery, tempraryStatus);
 			var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
 			return outputFilePath;
 		}
@@ -172,7 +201,11 @@ namespace Report.Pdf
 		#endregion
 
 		#region Printing&MergingPdfs
-
+		/// <summary>
+		/// این متد تمامی فایل پی دی اف که مورد نظر از در یک فایل قرار داده و بالافاصله اقدام به چاپ میکند
+		/// </summary>
+		/// <param name="inFiles">فایل های مرتبط را انتخاب کنید</param>
+		/// <param name="outFile">مسیر خروجی فایل را مشخص کنید</param>
 		public void Merge_Printing(List<string> inFiles, string outFile)
 		{
 

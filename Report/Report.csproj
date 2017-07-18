@@ -168,6 +168,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\VW_AccountingDocumentPrintController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -190,6 +191,9 @@
     <Compile Include="Models\Department.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\Gender.cs" />
+    <Compile Include="Models\GetColumnsOfTable_Result.cs">
+      <DependentUpon>Deca.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Manager.cs" />
     <Compile Include="Models\VW_AccountingDocumentPrint.cs">
       <DependentUpon>Deca.tt</DependentUpon>
@@ -199,6 +203,8 @@
     <Compile Include="Pdf\InstallFonts.cs" />
     <Compile Include="Pdf\Pdf2Image.cs" />
     <Compile Include="Pdf\ConstructurePdfReport.cs" />
+    <Compile Include="Pdf\PdfHandler.cs" />
+    <Compile Include="Pdf\SampleReport\Custom\Header.cs" />
     <Compile Include="Pdf\SampleReport\Grouping\AccGroup.cs" />
     <Compile Include="Pdf\SampleReport\Grouping\HeaderGroup.cs" />
     <Compile Include="Pdf\SampleReport\Headers_Footers\Headers_Footers.cs" />
@@ -207,6 +213,7 @@
     <Compile Include="Pdf\SampleReport\InlineHeader\InlineHeaders.cs" />
     <Compile Include="Pdf\SampleReport\InlineProvide.cs" />
     <Compile Include="Pdf\SampleReport\List.cs" />
+    <Compile Include="Pdf\SampleReport\SumNull.cs" />
     <Compile Include="Pdf\Template\GrayTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AccountingViewModel.cs" />
@@ -217,6 +224,8 @@
     <Content Include="Scripts\jquery-1.9.1.min.map" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\VW_AccountingDocumentPrint\Index.cshtml" />
+    <Content Include="Views\Home\Iframe.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -244,6 +253,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

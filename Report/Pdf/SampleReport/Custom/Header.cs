@@ -1,25 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-using PdfRpt.ColumnsItemsTemplates;
 using PdfRpt.Core.Contracts;
 using PdfRpt.Core.Helper;
+using PdfRpt.DataSources;
 using PdfRpt.FluentInterface;
 using Report.Models;
 
-namespace Report.Pdf.SampleReport.Grouping
+namespace Report.Pdf.SampleReport.Custom
 {
-	public class HeaderGroup : IPageHeader
+	public class Header : IPageHeader
 	{
 		public ConstructurePdfReport Report { get; set; }
 		public IPdfFont PdfRptFont { get; set; }
-		public PagesHeaderBuilder Header { get; set; }
+		public PagesHeaderBuilder HeaderBuilder { get; set; }
 		public bool Temprary { get; set; }
+		public DbContext Context { get; set; }
+		public string SqlQuery { get; set; }
+
+		private bool IsPermenant = false;
+		private bool IsConfirmed = false;
+		private int TemporaryDocumentNumber = 0;
+		private int PermanantDocumentNumber = 0;
+		private DateTime DocumentDate = DateTime.Now;
+		private string DocumentDescription = string.Empty;
+
 		public PdfGrid RenderingGroupHeader(Document pdfDoc, PdfWriter pdfWriter, IList<CellData> newGroupInfo, IList<SummaryCellData> summaryData)
 		{
-			var IsPermenant = (bool)newGroupInfo.GetValueOf<VW_AccountingDocumentPrint>(x => x.IsPermenant);
-			var IsConfirmed = (bool)newGroupInfo.GetValueOf<VW_AccountingDocumentPrint>(x => x.IsConfirmed);
+			return null;
+		}
+
+		public PdfGrid RenderingReportHeader(Document pdfDoc, PdfWriter pdfWriter, IList<SummaryCellData> summaryData)
+		{
+			var db = new DecaFinancialEntities();
+
+			var modeldb = db.VW_AccountingDocumentPrint.ToList();
+
+			//foreach (var print in modeldb)
+			//{
+			//	IsPermenant = print.IsPermenant;
+			//	IsConfirmed = (bool) print.IsConfirmed;
+			//	TemporaryDocumentNumber = (int) print.TemporaryDocumentNumber;
+			//	PermanantDocumentNumber = (int) print.PermanantDocumentNumber;
+			//	DocumentDate = (DateTime) print.DocumentDate;
+			//	DocumentDescription = print.Header;
+			//}
+
+
 
 			var table = new PdfGrid(numColumns: 3)
 			{
@@ -44,22 +74,21 @@ namespace Report.Pdf.SampleReport.Grouping
 			tb1.DefaultCell.Border = Rectangle.NO_BORDER;
 			tb1.DefaultCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
 
-			var noMov = Header.PdfFont.FontSelector.Process("شماره موقت:");
-			var valMov = Header.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<VW_AccountingDocumentPrint>(x => x.TemporaryDocumentNumber));
-			var noDae = Header.PdfFont.FontSelector.Process("شماره دائم:");
-			var valDae = Header.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<VW_AccountingDocumentPrint>(x => x.PermanantDocumentNumber));
-			var state = Header.PdfFont.FontSelector.Process("وضعیت سند:");
-			var valState = Header.PdfFont.FontSelector.Process(string.Empty);
+			var noMov = HeaderBuilder.PdfFont.FontSelector.Process("شماره موقت:");
+			var valMov = HeaderBuilder.PdfFont.FontSelector.Process(TemporaryDocumentNumber.ToString());
+			var noDae = HeaderBuilder.PdfFont.FontSelector.Process("شماره دائم:");
+			var valDae = HeaderBuilder.PdfFont.FontSelector.Process(PermanantDocumentNumber.ToString());
+			var state = HeaderBuilder.PdfFont.FontSelector.Process("وضعیت سند:");
+			var valState = HeaderBuilder.PdfFont.FontSelector.Process(string.Empty);
 
 			if (IsConfirmed)
 			{
-				valState = Header.PdfFont.FontSelector.Process(IsPermenant ? "دائم" : "تاییده شده");
+				valState = HeaderBuilder.PdfFont.FontSelector.Process(IsPermenant ? "دائم" : "تاییده شده");
 			}
 
 
-			var date = Header.PdfFont.FontSelector.Process("تاریخ سند:");
-			var datePhrase = Header.PdfFont.FontSelector.Process(
-				Convert.ToDateTime(newGroupInfo.GetSafeStringValueOf<VW_AccountingDocumentPrint>(x => x.DocumentDate)).ToString("yyyy/MM/dd"));
+			var date = HeaderBuilder.PdfFont.FontSelector.Process("تاریخ سند:");
+			var datePhrase = HeaderBuilder.PdfFont.FontSelector.Process(DocumentDate.ToString());
 
 			if (Temprary)
 			{
@@ -120,7 +149,7 @@ namespace Report.Pdf.SampleReport.Grouping
 					Padding = 5,
 				});
 			}
-			
+
 
 
 
@@ -151,7 +180,7 @@ namespace Report.Pdf.SampleReport.Grouping
 			tb2.DefaultCell.MinimumHeight = 60;
 			tb2.DefaultCell.Border = Rectangle.NO_BORDER;
 
-			var HeaderTitle = Header;
+			var HeaderTitle = HeaderBuilder;
 			var HeaderTitle2 = HeaderTitle;
 
 			//HeaderTitle.PdfFont.FontSelector.AddFont(font3);
@@ -194,11 +223,11 @@ namespace Report.Pdf.SampleReport.Grouping
 			tb3.DefaultCell.MinimumHeight = 30;
 			tb3.DefaultCell.Border = Rectangle.NO_BORDER;
 
-			Header.PdfFont.Size = 9;
-			Header.PdfFont.Style = DocumentFontStyle.Normal;
+			HeaderBuilder.PdfFont.Size = 9;
+			HeaderBuilder.PdfFont.Style = DocumentFontStyle.Normal;
 
-			var docType = Header.PdfFont.FontSelector.Process("نوع سند:");
-			var valType = Header.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<VW_AccountingDocumentPrint>(x => x.DocumentType));
+			var docType = HeaderBuilder.PdfFont.FontSelector.Process("نوع سند:");
+			var valType = HeaderBuilder.PdfFont.FontSelector.Process("123214");
 
 
 
@@ -219,11 +248,10 @@ namespace Report.Pdf.SampleReport.Grouping
 				Padding = 15,
 			});
 
-			Header.PdfFont.Size = 9;
-			Header.PdfFont.Style = DocumentFontStyle.Normal;
+			HeaderBuilder.PdfFont.Size = 9;
+			HeaderBuilder.PdfFont.Style = DocumentFontStyle.Normal;
 
-			var valDesc = Header.PdfFont.FontSelector.Process(newGroupInfo.GetSafeStringValueOf<VW_AccountingDocumentPrint>(x => x.DocumentDescription));
-
+			var valDesc = HeaderBuilder.PdfFont.FontSelector.Process("-");
 
 			tb3.AddCell(new PdfPCell(valDesc)
 			{
@@ -233,8 +261,8 @@ namespace Report.Pdf.SampleReport.Grouping
 				Padding = 10,
 			});
 
-			Header.PdfFont.Size = 9;
-			var docDesc = Header.PdfFont.FontSelector.Process("شرح سند:");
+			HeaderBuilder.PdfFont.Size = 9;
+			var docDesc = HeaderBuilder.PdfFont.FontSelector.Process("شرح سند:");
 
 
 			tb3.AddCell(new PdfPCell(docDesc)
@@ -252,23 +280,6 @@ namespace Report.Pdf.SampleReport.Grouping
 			#endregion
 
 			return table;
-		}
-
-		public PdfGrid RenderingReportHeader(Document pdfDoc, PdfWriter pdfWriter, IList<SummaryCellData> summaryData)
-		{
-			//var table = new PdfGrid(numColumns: 1) { WidthPercentage = 100 };
-
-			//table.AddSimpleRow(
-			//	(cellData, cellProperties) =>
-			//	{
-			//		cellData.Value = "گروه بندی کارمندان بر اساس AccountDocumentId";
-			//		cellProperties.PdfFont = PdfRptFont;
-			//		cellProperties.PdfFontStyle = DocumentFontStyle.Bold;
-			//		cellProperties.HorizontalAlignment = HorizontalAlignment.Center;
-			//		cellProperties.RunDirection = PdfRunDirection.RightToLeft;
-			//	});
-			//return table.AddBorderToTable();
-			return null;
 		}
 	}
 }

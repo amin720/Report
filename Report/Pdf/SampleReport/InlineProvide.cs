@@ -16,7 +16,7 @@ namespace Report.Pdf.SampleReport
 {
 	class InlineProvide
 	{
-		private static readonly Report.Pdf.ConstructurePdfReport _report = new Report.Pdf.ConstructurePdfReport();
+		private static Report.Pdf.ConstructurePdfReport _report = new Report.Pdf.ConstructurePdfReport();
 
 		private static bool _temprary = false;
 
@@ -24,15 +24,15 @@ namespace Report.Pdf.SampleReport
 		private readonly Font font1 = _report.GetFont(PersianFont.BNazanin);
 		private readonly Font font2 = _report.GetFont(EnglishFont.Calibri);
 
-		public IPdfReportData CreatePdfReport(DbContext modelDbContext = null, string sqlQuery = null, bool tempraryStatus = false)
+		public IPdfReportData CreatePdfReport(ConstructurePdfReport report, DbContext modelDbContext = null, string sqlQuery = null, bool tempraryStatus = false)
 		{
 			_temprary = tempraryStatus;
-
+			_report = report;
 			//فعال سازی حالت InMemory
 			if (HttpContext.Current == null)
 				return null;
 
-			var fileName = $"test-{Guid.NewGuid().ToString("N")}-InlineProvidersPdfReport.pdf";
+			var fileName = $"test-{Guid.NewGuid().ToString("N")}-InlineProvidersPdfReport.abs";
 
 			return new PdfReport().DocumentPreferences(doc =>
 				{
@@ -62,7 +62,7 @@ namespace Report.Pdf.SampleReport
 					// فرمان مستقیم برای چاپ
 					doc.PrintingPreferences(new PrintingPreferences()
 					{
-						ShowPrintDialogAutomatically = true,
+						ShowPrintDialogAutomatically = false,
 
 					});
 				})
@@ -96,6 +96,11 @@ namespace Report.Pdf.SampleReport
 				})
 				.PagesHeader(header =>
 				{
+					header.CacheHeader(cache: true); // It's a default setting to improve the performance.
+					//header.CustomHeader(new Report.Pdf.SampleReport.Custom.Header
+					//{
+					//	PdfRptFont = header.PdfFont, HeaderBuilder = header,Temprary = tempraryStatus,Report = report,Context = modelDbContext,SqlQuery = sqlQuery
+					//});
 					header.CacheHeader(cache: true); // It's a default setting to improve the performance.
 					header.InlineHeader(inlineHeader =>
 					{
@@ -159,7 +164,7 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.TotalAccountName);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.TotalAccount);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(1);
@@ -169,7 +174,7 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.CertainAccountName);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.CertainAccount);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(2);
@@ -179,7 +184,7 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.DetailedAccountName);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.DetailedAccount);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(3);
@@ -209,13 +214,13 @@ namespace Report.Pdf.SampleReport
 						{
 							template.TextBlock();
 							template.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
-								? string.Empty : $"{obj:n0}");
+								? "0" : $"{obj:n0}");
 						});
 						column.AggregateFunction(aggregateFunction =>
 						{
-							aggregateFunction.NumericAggregateFunction(AggregateFunction.Sum);
+							aggregateFunction.CustomAggregateFunction(new SumNull());
 							aggregateFunction.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
-								? string.Empty : $"{obj:n0}");
+								? "0" : $"{obj:n0}");
 						});
 					});
 
@@ -231,13 +236,13 @@ namespace Report.Pdf.SampleReport
 						{
 							template.TextBlock();
 							template.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
-								? string.Empty : $"{obj:n0}");
+								? "0" : $"{obj:n0}");
 						});
 						column.AggregateFunction(aggregateFunction =>
 						{
-							aggregateFunction.NumericAggregateFunction(AggregateFunction.Sum);
+							aggregateFunction.CustomAggregateFunction(new SumNull());
 							aggregateFunction.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
-								? string.Empty : $"{obj:n0}");
+								? "0" : $"{obj:n0}");
 						});
 
 					});
@@ -319,8 +324,8 @@ namespace Report.Pdf.SampleReport
 						var creditor = args.LastOverallAggregateValueOf<VW_AccountingDocumentPrint>(y => y.Creditor);
 						var debtor = args.LastOverallAggregateValueOf<VW_AccountingDocumentPrint>(y => y.Debtor);
 
-						var msgCreditor = $"مجموع بدهکار:  {creditor:n0} , \t" + double.Parse(creditor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) +" ریال";
-						var msgDebtor = $"مجموع بستانکار:  {debtor:n0} , \t" + double.Parse(debtor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian)+" ریال";
+						var msgCreditor = $"مجموع بدهکار:  {creditor:n0} , \t" + double.Parse(creditor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) + " ریال";
+						var msgDebtor = $"مجموع بستانکار:  {debtor:n0} , \t" + double.Parse(debtor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) + " ریال";
 
 						var infoTable = new PdfGrid(numColumns: 1)
 						{
@@ -428,8 +433,7 @@ namespace Report.Pdf.SampleReport
 		{
 			var db = model.Database.SqlQuery<VW_AccountingDocumentPrint>(sql: querySQL).ToList();
 
-			// todo: make state document
-			//var IsPermenant = db.sele
+			var firstRecord = db.First();
 
 			var table = new PdfGrid(numColumns: 3)
 			{
@@ -455,19 +459,26 @@ namespace Report.Pdf.SampleReport
 			tb1.DefaultCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
 
 			var noMov = header.PdfFont.FontSelector.Process("شماره موقت:");
-			var valMov = header.PdfFont.FontSelector.Process("123214");
+			var valMov = header.PdfFont.FontSelector.Process(firstRecord.TemporaryDocumentNumber.ToString());
 			var noDae = header.PdfFont.FontSelector.Process("شماره دائم:");
-			var valDae = header.PdfFont.FontSelector.Process("12324");
+			var valDae = header.PdfFont.FontSelector.Process(firstRecord.PermanantDocumentNumber.ToString());
 			var state = header.PdfFont.FontSelector.Process("وضعیت سند:");
 			var valState = header.PdfFont.FontSelector.Process("موقت");
 			var date = header.PdfFont.FontSelector.Process("تاریخ سند:");
-			var datePhrase = header.PdfFont.FontSelector.Process(valDate);
+			var datePhrase = header.PdfFont.FontSelector.Process(((DateTime)firstRecord.DocumentDate).ToString("g"));
 
-			// todo: make state document
-			//if ()
-			//{
-
-			//}
+			if ((bool)firstRecord.IsConfirmed && !(bool)firstRecord.IsPermenant)
+			{
+				valState = header.PdfFont.FontSelector.Process("تایید شده");
+			}
+			else if ((bool)firstRecord.IsConfirmed && (bool)firstRecord.IsPermenant)
+			{
+				valState = header.PdfFont.FontSelector.Process("دائم");
+			}
+			else
+			{
+				valState = header.PdfFont.FontSelector.Process("موقت");
+			}
 
 			if (_temprary)
 			{
@@ -490,7 +501,7 @@ namespace Report.Pdf.SampleReport
 					PaddingTop = 13,
 				});
 			}
-			
+
 			tb1.AddCell(new PdfPCell(valDae)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
@@ -563,7 +574,7 @@ namespace Report.Pdf.SampleReport
 
 
 
-			var nameCo = headerTitle.PdfFont.FontSelector.Process("نام سند");
+			var nameCo = headerTitle.PdfFont.FontSelector.Process(_report.DocumentName);
 
 			tb2.AddCell(new PdfPCell(nameCo)
 			{
@@ -577,7 +588,7 @@ namespace Report.Pdf.SampleReport
 			headerTitle2.PdfFont.Size = 40;
 			headerTitle2.PdfFont.Style = DocumentFontStyle.Bold;
 
-			var nameDoc = headerTitle2.PdfFont.FontSelector.Process("نام شرکت");
+			var nameDoc = headerTitle2.PdfFont.FontSelector.Process(_report.CompanyName);
 			tb2.AddCell(new PdfPCell(nameDoc)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
@@ -601,7 +612,7 @@ namespace Report.Pdf.SampleReport
 			header.PdfFont.Style = DocumentFontStyle.Normal;
 
 			var docType = header.PdfFont.FontSelector.Process("نوع سند:");
-			var valType = header.PdfFont.FontSelector.Process("123214");
+			var valType = header.PdfFont.FontSelector.Process(firstRecord.DocumentType);
 
 
 
@@ -625,7 +636,7 @@ namespace Report.Pdf.SampleReport
 			header.PdfFont.Size = 9;
 			header.PdfFont.Style = DocumentFontStyle.Normal;
 
-			var valDesc = header.PdfFont.FontSelector.Process("سلام خوبی منم خوبم \n راستی این برنامه جدید رو دیدی که \n دارن نرم افزار حسابداری درست میکنن");
+			var valDesc = header.PdfFont.FontSelector.Process(firstRecord.DocumentDescription);
 
 			tb3.AddCell(new PdfPCell(valDesc)
 			{
@@ -687,7 +698,7 @@ namespace Report.Pdf.SampleReport
 			tb13.DefaultCell.Border = Rectangle.NO_BORDER;
 
 
-			var valConfirmation3 = footer.PdfFont.FontSelector.Process("محمد امین زینالی");
+			var valConfirmation3 = footer.PdfFont.FontSelector.Process(_report.Confirmatory);
 			tb13.AddCell(new PdfPCell(valConfirmation3)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
@@ -697,7 +708,7 @@ namespace Report.Pdf.SampleReport
 				Border = Rectangle.NO_BORDER
 			});
 
-			var dataConfirmation3 = footer.PdfFont.FontSelector.Process("تایید کننده:");
+			var dataConfirmation3 = footer.PdfFont.FontSelector.Process("تایید کننده :");
 			tb13.AddCell(new PdfPCell(dataConfirmation3)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
@@ -716,7 +727,7 @@ namespace Report.Pdf.SampleReport
 			tb12.DefaultCell.Border = Rectangle.NO_BORDER;
 
 
-			var valConfirmation = footer.PdfFont.FontSelector.Process("محمد امین زینالی");
+			var valConfirmation = footer.PdfFont.FontSelector.Process(_report.FinancialMaanager);
 			tb12.AddCell(new PdfPCell(valConfirmation)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
@@ -726,7 +737,7 @@ namespace Report.Pdf.SampleReport
 				HorizontalAlignment = Element.ALIGN_CENTER,
 				Border = Rectangle.NO_BORDER
 			});
-			var dataConfirmation = footer.PdfFont.FontSelector.Process("تایید کننده:");
+			var dataConfirmation = footer.PdfFont.FontSelector.Process("مدیر مالی :");
 			tb12.AddCell(new PdfPCell(dataConfirmation)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
@@ -744,7 +755,7 @@ namespace Report.Pdf.SampleReport
 			tb11.DefaultCell.MinimumHeight = 20;
 			tb11.DefaultCell.Border = Rectangle.NO_BORDER;
 
-			var valRegolator = footer.PdfFont.FontSelector.Process("محمد امین زینالی");
+			var valRegolator = footer.PdfFont.FontSelector.Process(_report.Regulator);
 			tb11.AddCell(new PdfPCell(valRegolator)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
@@ -753,7 +764,7 @@ namespace Report.Pdf.SampleReport
 				Border = Rectangle.NO_BORDER
 			});
 
-			var dateRegolator = footer.PdfFont.FontSelector.Process("تنظیم کننده:");
+			var dateRegolator = footer.PdfFont.FontSelector.Process("تنظیم کننده :");
 			tb11.AddCell(new PdfPCell(dateRegolator)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,

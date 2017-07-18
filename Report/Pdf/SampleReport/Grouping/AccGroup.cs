@@ -14,7 +14,7 @@ namespace Report.Pdf.SampleReport.Grouping
 {
 	public class AccGroup
 	{
-		private static readonly Report.Pdf.ConstructurePdfReport _report = new Report.Pdf.ConstructurePdfReport();
+		private static Report.Pdf.ConstructurePdfReport _report = new Report.Pdf.ConstructurePdfReport();
 
 		private static bool _temprary = false;
 
@@ -22,9 +22,10 @@ namespace Report.Pdf.SampleReport.Grouping
 		private readonly Font font1 = _report.GetFont(PersianFont.BNazanin);
 		private readonly Font font2 = _report.GetFont(EnglishFont.Calibri);
 
-		public IPdfReportData CreatePdfReport(DbContext modelDbContext = null, string sqlQuery = null, bool tempraryStatus = false)
+		public IPdfReportData CreatePdfReport(ConstructurePdfReport report, DbContext modelDbContext = null, string sqlQuery = null, bool tempraryStatus = false)
 		{
 			_temprary = tempraryStatus;
+			_report = report;
 
 			return new PdfReport().DocumentPreferences(doc =>
 				{
@@ -83,7 +84,13 @@ namespace Report.Pdf.SampleReport.Grouping
 				{
 					var valDate = DateTime.Now.ToPersianDateTime(" / ", false);
 					header.CacheHeader(cache: true); // It's a default setting to improve the performance.
-					header.CustomHeader(new HeaderGroup { PdfRptFont = header.PdfFont, Header = header, Date = valDate,Temprary = tempraryStatus});
+					header.CustomHeader(new HeaderGroup
+					{
+						PdfRptFont = header.PdfFont,
+						Header = header,
+						Temprary = tempraryStatus,
+						Report = report,
+					});
 				})
 				.MainTableTemplate(template =>
 				{
@@ -152,19 +159,19 @@ namespace Report.Pdf.SampleReport.Grouping
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.AccountingDocumentId);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.DocumentDate);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.Order(1);
 						column.Width(20);
 						column.Group((val1, val2) =>
 						{
-							return (int) val1 == (int) val2;
+							return val1.ToString() == val2.ToString();
 						});
 					});
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.TotalAccountName);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.TotalAccount);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(3);
@@ -174,7 +181,7 @@ namespace Report.Pdf.SampleReport.Grouping
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.CertainAccountName);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.CertainAccount);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(4);
@@ -184,7 +191,7 @@ namespace Report.Pdf.SampleReport.Grouping
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.DetailedAccountName);
+						column.PropertyName<VW_AccountingDocumentPrint>(x => x.DetailedAccount);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(5);
@@ -214,13 +221,13 @@ namespace Report.Pdf.SampleReport.Grouping
 						{
 							template.TextBlock();
 							template.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
-								? string.Empty : $"{obj:n0}");
+								? "0" : $"{obj:n0}");
 						});
 						column.AggregateFunction(aggregateFunction =>
 						{
-							aggregateFunction.NumericAggregateFunction(AggregateFunction.Sum);
+							aggregateFunction.CustomAggregateFunction(new SumNull());
 							aggregateFunction.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
-								? string.Empty : $"{obj:n0}");
+								? "0" : $"{obj:n0}");
 						});
 					});
 
@@ -236,13 +243,13 @@ namespace Report.Pdf.SampleReport.Grouping
 						{
 							template.TextBlock();
 							template.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
-								? string.Empty : $"{obj:n0}");
+								? "0" : $"{obj:n0}");
 						});
 						column.AggregateFunction(aggregateFunction =>
 						{
-							aggregateFunction.NumericAggregateFunction(AggregateFunction.Sum);
+							aggregateFunction.CustomAggregateFunction(new SumNull());
 							aggregateFunction.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
-								? string.Empty : $"{obj:n0}");
+								? "0" : $"{obj:n0}");
 						});
 
 					});
