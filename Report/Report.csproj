@@ -214,6 +214,7 @@
     <Compile Include="Pdf\SampleReport\InlineProvide.cs" />
     <Compile Include="Pdf\SampleReport\List.cs" />
     <Compile Include="Pdf\SampleReport\SumNull.cs" />
+    <Compile Include="Pdf\SampleReport\TaxBalance.cs" />
     <Compile Include="Pdf\Template\GrayTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AccountingViewModel.cs" />
@@ -225,7 +226,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\VW_AccountingDocumentPrint\Index.cshtml" />
-    <Content Include="Views\Home\Iframe.cshtml" />
+    <Content Include="Views\Home\Iframe.html" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
