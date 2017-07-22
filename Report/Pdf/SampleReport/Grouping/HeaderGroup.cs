@@ -155,7 +155,7 @@ namespace Report.Pdf.SampleReport.Grouping
 			var HeaderTitle2 = HeaderTitle;
 
 			//HeaderTitle.PdfFont.FontSelector.AddFont(font3);
-			HeaderTitle.PdfFont.Size = 25;
+			HeaderTitle.PdfFont.Size = 20;
 			HeaderTitle.PdfFont.Style = DocumentFontStyle.Bold;
 
 
@@ -171,7 +171,7 @@ namespace Report.Pdf.SampleReport.Grouping
 
 			});
 
-			HeaderTitle2.PdfFont.Size = 36;
+			HeaderTitle2.PdfFont.Size = 30;
 			HeaderTitle2.PdfFont.Style = DocumentFontStyle.Bold;
 
 			var nameDoc = HeaderTitle2.PdfFont.FontSelector.Process(Report.CompanyName);
@@ -215,7 +215,7 @@ namespace Report.Pdf.SampleReport.Grouping
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				BorderWidth = 0,
-				HorizontalAlignment = Element.ALIGN_RIGHT,
+				HorizontalAlignment = Element.ALIGN_CENTER,
 				Padding = 15,
 			});
 
@@ -241,7 +241,7 @@ namespace Report.Pdf.SampleReport.Grouping
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				BorderWidth = 0,
-				HorizontalAlignment = Element.ALIGN_RIGHT,
+				HorizontalAlignment = Element.ALIGN_CENTER,
 				Padding = 10,
 			});
 

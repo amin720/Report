@@ -27,6 +27,24 @@ warning 6002: The table/view 'DecaFinancial.Accounting.VW_AccountingDocumentPrin
           <Property Name="TotalAccount" Type="nvarchar" MaxLength="273" />
           <Property Name="DocumentType" Type="nvarchar(max)" />
         </EntityType>
+        <Function Name="STP_GetCertainAccountBalance4Columns" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AccoutingYear" Type="int" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="StartDate" Type="smalldatetime" Mode="In" />
+          <Parameter Name="EndDate" Type="smalldatetime" Mode="In" />
+        </Function>
+        <Function Name="STP_GetDetailedAccountBalance4Columns" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AccoutingYear" Type="int" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="StartDate" Type="smalldatetime" Mode="In" />
+          <Parameter Name="EndDate" Type="smalldatetime" Mode="In" />
+        </Function>
+        <Function Name="STP_GetTotalAccountBalance4Columns" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AccoutingYear" Type="int" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="StartDate" Type="smalldatetime" Mode="In" />
+          <Parameter Name="EndDate" Type="smalldatetime" Mode="In" />
+        </Function>
         <Function Name="GetColumnsOfTable" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="metadata">
           <Parameter Name="TableName" Type="nvarchar" Mode="In" />
         </Function>
@@ -56,11 +74,36 @@ warning 6002: The table/view 'DecaFinancial.Accounting.VW_AccountingDocumentPrin
     <edmx:ConceptualModels>
       <Schema Namespace="DecaFinancialModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="DecaFinancialEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="VW_AccountingDocumentPrint" EntityType="DecaFinancialModel.VW_AccountingDocumentPrint" />
           <FunctionImport Name="GetColumnsOfTable" ReturnType="Collection(DecaFinancialModel.GetColumnsOfTable_Result)">
-            <Parameter Name="TableName" Mode="In" Type="String" />
+          <Parameter Name="TableName" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="VW_AccountingDocumentPrint" EntityType="DecaFinancialModel.VW_AccountingDocumentPrint" />
+          <FunctionImport Name="STP_GetCertainAccountBalance4Columns" ReturnType="Collection(DecaFinancialModel.STP_GetCertainAccountBalance4Columns_Result)">
+            <Parameter Name="AccoutingYear" Mode="In" Type="Int32" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="STP_GetDetailedAccountBalance4Columns" ReturnType="Collection(DecaFinancialModel.STP_GetDetailedAccountBalance4Columns_Result)">
+            <Parameter Name="AccoutingYear" Mode="In" Type="Int32" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="STP_GetTotalAccountBalance4Columns" ReturnType="Collection(DecaFinancialModel.STP_GetCertainAccountBalance4Columns_Result)">
+            <Parameter Name="AccoutingYear" Mode="In" Type="Int32" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDate" Mode="In" Type="DateTime" />
           </FunctionImport>
         </EntityContainer>
+        <ComplexType Name="GetColumnsOfTable_Result">
+          <Property Type="String" Name="ColumnName" Nullable="true" MaxLength="128" />
+          <Property Type="Int32" Name="ColumnID" Nullable="false" />
+          <Property Type="Int32" Name="TableID" Nullable="false" />
+          <Property Type="String" Name="TableName" Nullable="false" MaxLength="128" />
+          <Property Type="String" Name="DBTypeName" Nullable="false" MaxLength="128" />
+        </ComplexType>
         <EntityType Name="VW_AccountingDocumentPrint">
           <Key>
             <PropertyRef Name="ID" />
@@ -81,12 +124,32 @@ warning 6002: The table/view 'DecaFinancial.Accounting.VW_AccountingDocumentPrin
           <Property Name="TotalAccount" Type="String" MaxLength="273" FixedLength="false" Unicode="true" />
           <Property Name="DocumentType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
-        <ComplexType Name="GetColumnsOfTable_Result">
-          <Property Type="String" Name="ColumnName" Nullable="true" MaxLength="128" />
-          <Property Type="Int32" Name="ColumnID" Nullable="false" />
-          <Property Type="Int32" Name="TableID" Nullable="false" />
-          <Property Type="String" Name="TableName" Nullable="false" MaxLength="128" />
-          <Property Type="String" Name="DBTypeName" Nullable="false" MaxLength="128" />
+        <ComplexType Name="STP_GetCertainAccountBalance4Columns_Result">
+          <Property Type="Int32" Name="Code" Nullable="true" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="500" />
+          <Property Type="Int64" Name="TotalDebtor" Nullable="true" />
+          <Property Type="Int64" Name="TotalCreditor" Nullable="true" />
+          <Property Type="Int64" Name="RemainDebtor" Nullable="true" />
+          <Property Type="Int64" Name="RemainCreditor" Nullable="true" />
+          <Property Type="Boolean" Name="OperationType" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="STP_GetDetailedAccountBalance4Columns_Result">
+          <Property Type="Int32" Name="Code" Nullable="true" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="500" />
+          <Property Type="Int64" Name="TotalDebtor" Nullable="true" />
+          <Property Type="Int64" Name="TotalCreditor" Nullable="true" />
+          <Property Type="Int64" Name="RemainDebtor" Nullable="true" />
+          <Property Type="Int64" Name="RemainCreditor" Nullable="true" />
+          <Property Type="Boolean" Name="OperationType" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="STP_GetTotalAccountBalance4Columns_Result">
+          <Property Type="Int32" Name="Code" Nullable="true" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="500" />
+          <Property Type="Int64" Name="TotalDebtor" Nullable="true" />
+          <Property Type="Int64" Name="TotalCreditor" Nullable="true" />
+          <Property Type="Int64" Name="RemainDebtor" Nullable="true" />
+          <Property Type="Int64" Name="RemainCreditor" Nullable="true" />
+          <Property Type="Boolean" Name="OperationType" Nullable="true" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -94,6 +157,17 @@ warning 6002: The table/view 'DecaFinancial.Accounting.VW_AccountingDocumentPrin
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="DecaFinancialModelStoreContainer" CdmEntityContainer="DecaFinancialEntities">
+          <FunctionImportMapping FunctionImportName="GetColumnsOfTable" FunctionName="DecaFinancialModel.Store.GetColumnsOfTable">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DecaFinancialModel.GetColumnsOfTable_Result">
+                <ScalarProperty Name="ColumnName" ColumnName="ColumnName" />
+                <ScalarProperty Name="ColumnID" ColumnName="ColumnID" />
+                <ScalarProperty Name="TableID" ColumnName="TableID" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="DBTypeName" ColumnName="DBTypeName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           <EntitySetMapping Name="VW_AccountingDocumentPrint">
             <EntityTypeMapping TypeName="DecaFinancialModel.VW_AccountingDocumentPrint">
               <MappingFragment StoreEntitySet="VW_AccountingDocumentPrint">
@@ -115,14 +189,42 @@ warning 6002: The table/view 'DecaFinancial.Accounting.VW_AccountingDocumentPrin
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="GetColumnsOfTable" FunctionName="DecaFinancialModel.Store.GetColumnsOfTable">
+          <FunctionImportMapping FunctionImportName="STP_GetCertainAccountBalance4Columns" FunctionName="DecaFinancialModel.Store.STP_GetCertainAccountBalance4Columns">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="DecaFinancialModel.GetColumnsOfTable_Result">
-                <ScalarProperty Name="ColumnName" ColumnName="ColumnName" />
-                <ScalarProperty Name="ColumnID" ColumnName="ColumnID" />
-                <ScalarProperty Name="TableID" ColumnName="TableID" />
-                <ScalarProperty Name="TableName" ColumnName="TableName" />
-                <ScalarProperty Name="DBTypeName" ColumnName="DBTypeName" />
+              <ComplexTypeMapping TypeName="DecaFinancialModel.STP_GetCertainAccountBalance4Columns_Result">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TotalDebtor" ColumnName="TotalDebtor" />
+                <ScalarProperty Name="TotalCreditor" ColumnName="TotalCreditor" />
+                <ScalarProperty Name="RemainDebtor" ColumnName="RemainDebtor" />
+                <ScalarProperty Name="RemainCreditor" ColumnName="RemainCreditor" />
+                <ScalarProperty Name="OperationType" ColumnName="OperationType" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="STP_GetDetailedAccountBalance4Columns" FunctionName="DecaFinancialModel.Store.STP_GetDetailedAccountBalance4Columns">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DecaFinancialModel.STP_GetDetailedAccountBalance4Columns_Result">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TotalDebtor" ColumnName="TotalDebtor" />
+                <ScalarProperty Name="TotalCreditor" ColumnName="TotalCreditor" />
+                <ScalarProperty Name="RemainDebtor" ColumnName="RemainDebtor" />
+                <ScalarProperty Name="RemainCreditor" ColumnName="RemainCreditor" />
+                <ScalarProperty Name="OperationType" ColumnName="OperationType" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="STP_GetTotalAccountBalance4Columns" FunctionName="DecaFinancialModel.Store.STP_GetTotalAccountBalance4Columns">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DecaFinancialModel.STP_GetCertainAccountBalance4Columns_Result">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TotalDebtor" ColumnName="TotalDebtor" />
+                <ScalarProperty Name="TotalCreditor" ColumnName="TotalCreditor" />
+                <ScalarProperty Name="RemainDebtor" ColumnName="RemainDebtor" />
+                <ScalarProperty Name="RemainCreditor" ColumnName="RemainCreditor" />
+                <ScalarProperty Name="OperationType" ColumnName="OperationType" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

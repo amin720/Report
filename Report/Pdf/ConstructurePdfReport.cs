@@ -12,6 +12,7 @@ using PdfRpt;
 using PdfRpt.Core.Contracts;
 using PdfRpt.Core.Helper;
 using Report.Pdf.SampleReport;
+using Report.Pdf.SampleReport.Balance;
 using Report.Pdf.SampleReport.Grouping;
 using static Report.Pdf.Pdf2Image;
 using Font = iTextSharp.text.Font;
@@ -187,6 +188,7 @@ namespace Report.Pdf
 		/// Redirect
 		/// قرار دهید
 		/// </summary>
+		/// <param name="report"></param>
 		/// <param name="model">Callbacked Database</param>
 		/// <param name="sqlQuery"></param>
 		/// <param name="tempraryStatus">نمایش یا عدم نمایش شماره موقت</param>
@@ -194,6 +196,57 @@ namespace Report.Pdf
 		public string AccountingReportGrouping(ConstructurePdfReport report, DbContext model = null, string sqlQuery = null, bool tempraryStatus = false)
 		{
 			var rpt = new AccGroup().CreatePdfReport(report, model, sqlQuery, tempraryStatus);
+			var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
+			return outputFilePath;
+		}
+
+		/// <summary>
+		/// برای استفاده از کافی است خروجی را داخل 
+		/// Redirect
+		/// قرار دهید
+		/// </summary>
+		/// <param name="report"></param>
+		/// <param name="model">Callbacked Database</param>
+		/// <param name="sqlQuery"></param>
+		/// <param name="tempraryStatus">نمایش یا عدم نمایش شماره موقت</param>
+		/// <returns>یک رشته که مسیر فایل بعد از خروجی است مشخص میکند</returns>
+		public string AccountingReportTotalBalance(ConstructurePdfReport report, DbContext model = null, string sqlQuery = null, bool tempraryStatus = false)
+		{
+			var rpt = new TotalBalance().CreatePdfReport(report, model, sqlQuery, tempraryStatus);
+			var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
+			return outputFilePath;
+		}
+
+		/// <summary>
+		/// برای استفاده از کافی است خروجی را داخل 
+		/// Redirect
+		/// قرار دهید
+		/// </summary>
+		/// <param name="report"></param>
+		/// <param name="model">Callbacked Database</param>
+		/// <param name="sqlQuery"></param>
+		/// <param name="tempraryStatus">نمایش یا عدم نمایش شماره موقت</param>
+		/// <returns>یک رشته که مسیر فایل بعد از خروجی است مشخص میکند</returns>
+		public string AccountingReportCertainBalance(ConstructurePdfReport report, DbContext model = null, string sqlQuery = null, bool tempraryStatus = false)
+		{
+			var rpt = new CertainBalance().CreatePdfReport(report, model, sqlQuery, tempraryStatus);
+			var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
+			return outputFilePath;
+		}
+
+		/// <summary>
+		/// برای استفاده از کافی است خروجی را داخل 
+		/// Redirect
+		/// قرار دهید
+		/// </summary>
+		/// <param name="report"></param>
+		/// <param name="model">Callbacked Database</param>
+		/// <param name="sqlQuery"></param>
+		/// <param name="tempraryStatus">نمایش یا عدم نمایش شماره موقت</param>
+		/// <returns>یک رشته که مسیر فایل بعد از خروجی است مشخص میکند</returns>
+		public string AccountingReportDetailedBalance(ConstructurePdfReport report, DbContext model = null, string sqlQuery = null, bool tempraryStatus = false)
+		{
+			var rpt = new DetailedBalance().CreatePdfReport(report, model, sqlQuery, tempraryStatus);
 			var outputFilePath = rpt.FileName.Replace(HttpRuntime.AppDomainAppPath, string.Empty);
 			return outputFilePath;
 		}

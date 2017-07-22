@@ -12,9 +12,9 @@ using PdfRpt.FluentInterface;
 using Report.Models;
 using Reportig.Template;
 
-namespace Report.Pdf.SampleReport
+namespace Report.Pdf.SampleReport.Balance
 {
-	class InlineProvide
+	public class CertainBalance
 	{
 		private static Report.Pdf.ConstructurePdfReport _report = new Report.Pdf.ConstructurePdfReport();
 
@@ -126,20 +126,9 @@ namespace Report.Pdf.SampleReport
 				})
 				.MainTableDataSource(dataSource =>
 				{
-					//if (!string.IsNullOrEmpty(sqlQuery))
-					//{
-					// TODO: repair
-					//var model = new Deca();
 
-					//string querySql = @"SELECT * FROM [DecaFinancial].[dbo].[VW_AccountingDocumentPrint]";
 
-					var db = modelDbContext.Database.SqlQuery<VW_AccountingDocumentPrint>(sql: sqlQuery).ToList();
-					//}
-					//else
-					//{
-					//	//var employess = model.ViewModel.AccountingViewModels.OrderBy(e => e.FullName).ToList();
-
-					//}
+					var db = modelDbContext.Database.SqlQuery<STP_GetCertainAccountBalance4Columns_Result>(sql: sqlQuery).ToList();
 
 					dataSource.StronglyTypedList(db);
 				})
@@ -158,58 +147,84 @@ namespace Report.Pdf.SampleReport
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(0);
-						column.Width(1);
-						column.HeaderCell("#");
+						column.Width((float)0.666);
+						column.HeaderCell("ردیف", captionRotation: 90);
 					});
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.TotalAccount);
+						column.PropertyName<STP_GetCertainAccountBalance4Columns_Result>(x => x.Code);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(1);
-						column.Width(2);
-						column.HeaderCell("حساب کل");
+						column.Width(1);
+						column.HeaderCell("کد");
 					});
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.CertainAccount);
+						column.PropertyName<STP_GetCertainAccountBalance4Columns_Result>(x => x.Name);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(2);
-						column.Width(2);
-						column.HeaderCell("حساب معین");
+						column.Width(3);
+						column.HeaderCell("نام");
 					});
+
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.DetailedAccount);
+						column.PropertyName<STP_GetCertainAccountBalance4Columns_Result>(x => x.TotalDebtor);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(3);
 						column.Width(2);
-						column.HeaderCell("حساب تفصیلی");
+						column.HeaderCell("گردش بستانکار");
+						column.ColumnItemsTemplate(template =>
+						{
+							template.TextBlock();
+							template.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
+								? "0" : $"{obj:n0}");
+						});
+						column.AggregateFunction(aggregateFunction =>
+						{
+							aggregateFunction.CustomAggregateFunction(new SumNull());
+							aggregateFunction.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
+								? "0" : $"{obj:n0}");
+						});
 					});
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.Description);
+						column.PropertyName<STP_GetCertainAccountBalance4Columns_Result>(x => x.TotalCreditor);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(4);
-						column.Width(4);
-						column.HeaderCell("شرح");
+						column.Width(2);
+						column.HeaderCell("گردش بدهکار");
+						column.ColumnItemsTemplate(template =>
+						{
+							template.TextBlock();
+							template.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
+								? "0" : $"{obj:n0}");
+						});
+						column.AggregateFunction(aggregateFunction =>
+						{
+							aggregateFunction.CustomAggregateFunction(new SumNull());
+							aggregateFunction.DisplayFormatFormula(obj => obj == null || string.IsNullOrEmpty(obj.ToString())
+								? "0" : $"{obj:n0}");
+						});
+
 					});
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.Debtor);
+						column.PropertyName<STP_GetCertainAccountBalance4Columns_Result>(x => x.RemainDebtor);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(5);
 						column.Width(2);
-						column.HeaderCell("بستانکار");
+						column.HeaderCell("مانده بستانکار");
 						column.ColumnItemsTemplate(template =>
 						{
 							template.TextBlock();
@@ -226,12 +241,12 @@ namespace Report.Pdf.SampleReport
 
 					columns.AddColumn(column =>
 					{
-						column.PropertyName<VW_AccountingDocumentPrint>(x => x.Creditor);
+						column.PropertyName<STP_GetCertainAccountBalance4Columns_Result>(x => x.RemainCreditor);
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(6);
 						column.Width(2);
-						column.HeaderCell("بدهکار");
+						column.HeaderCell("مانده بدهکار");
 						column.ColumnItemsTemplate(template =>
 						{
 							template.TextBlock();
@@ -246,43 +261,6 @@ namespace Report.Pdf.SampleReport
 						});
 
 					});
-
-					//columns.AddColumn(column =>
-					//{
-					//	column.PropertyName<ViewModel.AccountingViewModel>(x => x.Id);
-					//	column.CellsHorizontalAlignment(HorizontalAlignment.Center);
-					//	column.IsVisible(true);
-					//	column.Order(4);
-					//	column.Width(2);
-					//	column.HeaderCell("QRCode");
-					//	column.ColumnItemsTemplate(itemsTemplate =>
-					//	{
-					//		itemsTemplate.InlineField(inlineField =>
-					//		{
-					//			inlineField.RenderCell(cellData =>
-					//			{
-					//				var data = cellData.Attributes.RowData.TableRowData;
-					//				var id = data.GetSafeStringValueOf<ViewModel.AccountingViewModel>(x => x.Id);
-					//				var person = data.GetSafeStringValueOf<ViewModel.AccountingViewModel>(e => e.FullName);
-					//				var salary = data.GetSafeStringValueOf<ViewModel.AccountingViewModel>(e => e.Salary);
-					//				var department = data.GetSafeStringValueOf<ViewModel.AccountingViewModel>(e => e.Department.Name);
-					//				var manager = data.GetSafeStringValueOf<ViewModel.AccountingViewModel>(e => e.Manager.ViewModel.AccountingViewModel.FullName);
-
-					//				var dataString =
-					//					$"The {person} with id: {id} , Salary: {salary}$ \n\n Department: {department} \n\n Manager: {manager}";
-
-					//				var qrcode = new BarcodeQRCode(dataString, 1, 1, null);
-					//				var image = qrcode.GetImage();
-					//				var mask = qrcode.GetImage();
-					//				mask.MakeMask();
-					//				image.ImageMask = mask; // making the background color transparent
-					//				var pdfCell = new PdfPCell(image, fit: false);
-
-					//				return pdfCell;
-					//			});
-					//		});
-					//	});
-					//});
 				})
 				.MainTableEvents(events =>
 				{
@@ -291,132 +269,78 @@ namespace Report.Pdf.SampleReport
 					events.CellCreated(args =>
 					{
 						if (args.CellType == CellType.PreviousPageSummaryCell ||
-							args.CellType == CellType.PageSummaryCell ||
-							args.CellType == CellType.SummaryRowCell)
+						    args.CellType == CellType.PageSummaryCell ||
+						    args.CellType == CellType.SummaryRowCell)
 						{
 							if (!string.IsNullOrEmpty(args.Cell.RowData.FormattedValue) &&
-								args.Cell.RowData.PropertyName == "Debtor")
+							    args.Cell.RowData.PropertyName == "TotalDebtor")
 							{
-								args.Cell.RowData.FormattedValue += " ریال";
+								args.Cell.RowData.FormattedValue += " ریال ";
 							}
 
 							if (!string.IsNullOrEmpty(args.Cell.RowData.FormattedValue) &&
-								args.Cell.RowData.PropertyName == "Creditor")
+							    args.Cell.RowData.PropertyName == "TotalCreditor")
 							{
-								args.Cell.RowData.FormattedValue += " ریال";
+								args.Cell.RowData.FormattedValue += " ریال ";
+							}
+							if (!string.IsNullOrEmpty(args.Cell.RowData.FormattedValue) &&
+							    args.Cell.RowData.PropertyName == "RemainDebtor")
+							{
+								args.Cell.RowData.FormattedValue += " ریال ";
+							}
+
+							if (!string.IsNullOrEmpty(args.Cell.RowData.FormattedValue) &&
+							    args.Cell.RowData.PropertyName == "RemainCreditor")
+							{
+								args.Cell.RowData.FormattedValue += " ریال ";
 							}
 						}
 					});
 
-					events.MainTableAdded(args =>
-					{
-						/*var objData = args.ColumnCellsSummaryData.Where(x => x.CellData.PropertyName.Equals("Price"))
-							.OrderByDescending(x => x.OverallRowNumber)
-							.First()
-							.OverallAggregateValue;*/
+					//events.MainTableAdded(args =>
+					//{
+					//	/*var objData = args.ColumnCellsSummaryData.Where(x => x.CellData.PropertyName.Equals("Price"))
+					//		.OrderByDescending(x => x.OverallRowNumber)
+					//		.First()
+					//		.OverallAggregateValue;*/
 
-						var taxTable = new PdfGrid(relativeWidths: args.Table.RelativeWidths)
-						{
-							WidthPercentage = args.Table.WidthPercentage,
-							SpacingBefore = args.Table.SpacingBefore
-						}; // Create a clone of the MainTable's structure 
+					//	var taxTable = new PdfGrid(relativeWidths: args.Table.RelativeWidths)
+					//	{
+					//		WidthPercentage = args.Table.WidthPercentage,
+					//		SpacingBefore = args.Table.SpacingBefore
+					//	}; // Create a clone of the MainTable's structure 
 
-						var creditor = args.LastOverallAggregateValueOf<VW_AccountingDocumentPrint>(y => y.Creditor);
-						var debtor = args.LastOverallAggregateValueOf<VW_AccountingDocumentPrint>(y => y.Debtor);
+					//	var creditor = args.LastOverallAggregateValueOf<VW_AccountingDocumentPrint>(y => y.Creditor);
+					//	var debtor = args.LastOverallAggregateValueOf<VW_AccountingDocumentPrint>(y => y.Debtor);
 
-						var msgCreditor = $"مجموع بدهکار:  {creditor:n0} , \t" + double.Parse(creditor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) + " ریال";
-						var msgDebtor = $"مجموع بستانکار:  {debtor:n0} , \t" + double.Parse(debtor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) + " ریال";
+					//	var msgCreditor = $"مجموع بدهکار:  {creditor:n0} , \t" + double.Parse(creditor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) + " ریال";
+					//	var msgDebtor = $"مجموع بستانکار:  {debtor:n0} , \t" + double.Parse(debtor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) + " ریال";
 
-						var infoTable = new PdfGrid(numColumns: 1)
-						{
-							WidthPercentage = 100
-						};
+					//	var infoTable = new PdfGrid(numColumns: 1)
+					//	{
+					//		WidthPercentage = 100
+					//	};
 
-						//infoTable.AddSimpleRow(
-						//	(cellData, properties) =>
-						//	{
-						//		cellData.Value = "Show data after the main table ...";
-						//		properties.PdfFont = events.PdfFont;
-						//		properties.RunDirection = PdfRunDirection.RightToLeft;
-						//	});
+					//	infoTable.AddSimpleRow(
+					//		(cellData, properties) =>
+					//		{
+					//			cellData.Value = msgCreditor;
+					//			properties.CellPadding = 10;
+					//			properties.PdfFont = events.PdfFont;
+					//			properties.RunDirection = PdfRunDirection.RightToLeft;
+					//		});
 
-						infoTable.AddSimpleRow(
-							(cellData, properties) =>
-							{
-								cellData.Value = msgCreditor;
-								properties.CellPadding = 10;
-								properties.PdfFont = events.PdfFont;
-								properties.RunDirection = PdfRunDirection.RightToLeft;
-							});
+					//	infoTable.AddSimpleRow(
+					//		(cellData, properties) =>
+					//		{
+					//			cellData.Value = msgDebtor;
+					//			properties.CellPadding = 10;
+					//			properties.PdfFont = events.PdfFont;
+					//			properties.RunDirection = PdfRunDirection.RightToLeft;
+					//		});
 
-						infoTable.AddSimpleRow(
-							(cellData, properties) =>
-							{
-								cellData.Value = msgDebtor;
-								properties.CellPadding = 10;
-								properties.PdfFont = events.PdfFont;
-								properties.RunDirection = PdfRunDirection.RightToLeft;
-							});
-
-						//taxTable.AddSimpleRow(
-						//	null, null, null,
-						//	(data, cellProperties) =>
-						//	{
-						//		data.Value = "جمع بدهکار";
-						//		cellProperties.PdfFont = args.PdfFont;
-						//		cellProperties.HorizontalAlignment = HorizontalAlignment.Right;
-						//	},
-						//	(data, cellProperties) =>
-						//	{
-						//		data.Value = $"{creditor:n0}";
-						//		cellProperties.BorderColor = BaseColor.LIGHT_GRAY;
-						//		cellProperties.ShowBorder = true;
-						//	});
-
-						//taxTable.AddSimpleRow(
-						//	null, null, null,
-						//	null,
-						//	(data, cellProperties) =>
-						//	{
-						//		data.Value = long.Parse(creditor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) + " ریال";
-						//		cellProperties.PdfFont = args.PdfFont;
-						//		cellProperties.BorderColor = BaseColor.LIGHT_GRAY;
-						//		cellProperties.ShowBorder = true;
-						//		cellProperties.PdfFontStyle = DocumentFontStyle.Bold;
-						//	});
-
-						//taxTable.AddSimpleRow(
-						//	null, null, null,
-						//	(data, cellProperties) =>
-						//	{
-						//		data.Value = "جمع بستانکار";
-						//		cellProperties.PdfFont = args.PdfFont;
-						//		cellProperties.HorizontalAlignment = HorizontalAlignment.Right;
-						//	},
-						//	(data, cellProperties) =>
-						//	{
-						//		data.Value = $"{debtor:n0}";
-						//		cellProperties.PdfFont = args.PdfFont;
-						//		cellProperties.BorderColor = BaseColor.LIGHT_GRAY;
-						//		cellProperties.ShowBorder = true;
-						//	});
-
-						//taxTable.AddSimpleRow(
-						//	null, null, null,
-						//	null,
-						//	(data, cellProperties) =>
-						//	{
-						//		data.Value = long.Parse(debtor, NumberStyles.AllowThousands, CultureInfo.InvariantCulture).NumberToText(Language.Persian) + " ریال";
-						//		cellProperties.PdfFont = args.PdfFont;
-						//		cellProperties.BorderColor = BaseColor.LIGHT_GRAY;
-						//		cellProperties.ShowBorder = true;
-						//		cellProperties.PdfFontStyle = DocumentFontStyle.Bold;
-						//	});
-
-						//args.PdfDoc.Add(taxTable);
-
-						args.PdfDoc.Add(infoTable.AddBorderToTable(borderColor: BaseColor.LIGHT_GRAY, spacingBefore: 10f));
-					});
+					//	args.PdfDoc.Add(infoTable.AddBorderToTable(borderColor: BaseColor.LIGHT_GRAY, spacingBefore: 10f));
+					//});
 				})
 				.Export(export =>
 				{
@@ -431,10 +355,6 @@ namespace Report.Pdf.SampleReport
 
 		private static PdfGrid CreateHeader(PagesHeaderBuilder header, string valDate, DbContext model, string querySQL)
 		{
-			var db = model.Database.SqlQuery<VW_AccountingDocumentPrint>(sql: querySQL).ToList();
-
-			var firstRecord = db.First();
-
 			var table = new PdfGrid(numColumns: 3)
 			{
 				WidthPercentage = 100,
@@ -458,51 +378,41 @@ namespace Report.Pdf.SampleReport
 			tb1.DefaultCell.Border = Rectangle.NO_BORDER;
 			tb1.DefaultCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
 
-			var noMov = header.PdfFont.FontSelector.Process("شماره موقت:");
-			var valMov = header.PdfFont.FontSelector.Process(firstRecord.TemporaryDocumentNumber.ToString());
-			var noDae = header.PdfFont.FontSelector.Process("شماره دائم:");
-			var valDae = header.PdfFont.FontSelector.Process(firstRecord.PermanantDocumentNumber.ToString());
-			var state = header.PdfFont.FontSelector.Process("وضعیت سند:");
-			var valState = header.PdfFont.FontSelector.Process("موقت");
-			var date = header.PdfFont.FontSelector.Process("تاریخ سند:");
-			var datePhrase = header.PdfFont.FontSelector.Process(((DateTime)firstRecord.DocumentDate).ToString("g"));
+			var year = header.PdfFont.FontSelector.Process("سال مالی:");
+			// todo: insert year finacial
+			var valYear = header.PdfFont.FontSelector.Process(Convert.ToDateTime(valDate).ToString("yyyy"));
+			var fromDate = header.PdfFont.FontSelector.Process("از تاریخ:");
+			// todo: insert from date
+			var valFromDate = header.PdfFont.FontSelector.Process(Convert.ToDateTime(valDate).ToString("yyyy/mm/dd"));
+			var toDate = header.PdfFont.FontSelector.Process("تا تاریخ:");
+			// todo: insert to date
+			var valToDate = header.PdfFont.FontSelector.Process(Convert.ToDateTime(valDate).ToString("yyyy/mm/dd"));
 
-			if ((bool)firstRecord.IsConfirmed && !(bool)firstRecord.IsPermenant)
-			{
-				valState = header.PdfFont.FontSelector.Process("تایید شده");
-			}
-			else if ((bool)firstRecord.IsConfirmed && (bool)firstRecord.IsPermenant)
-			{
-				valState = header.PdfFont.FontSelector.Process("دائم");
-			}
-			else
-			{
-				valState = header.PdfFont.FontSelector.Process("موقت");
-			}
+			var balance = header.PdfFont.FontSelector.Process("حساب معین:");
+			var valBalance = header.PdfFont.FontSelector.Process(string.Empty);
 
-			if (_temprary)
+
+			tb1.AddCell(new PdfPCell(valYear)
 			{
-				tb1.AddCell(new PdfPCell(valMov)
-				{
-					RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-					Border = 0,
-					HorizontalAlignment = Element.ALIGN_CENTER,
-					Padding = 5,
-					PaddingTop = 13,
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				Border = 0,
+				HorizontalAlignment = Element.ALIGN_CENTER,
+				Padding = 5,
+				PaddingTop = 13,
 
-				});
-				tb1.AddCell(new PdfPCell(noMov)
-				{
-					RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-					BorderWidth = 0,
-					HorizontalAlignment = Element.ALIGN_CENTER,
-					ArabicOptions = 1,
-					Padding = 5,
-					PaddingTop = 13,
-				});
-			}
+			});
+			tb1.AddCell(new PdfPCell(year)
+			{
+				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+				BorderWidth = 0,
+				HorizontalAlignment = Element.ALIGN_CENTER,
+				ArabicOptions = 1,
+				Padding = 5,
+				PaddingTop = 13,
+			});
 
-			tb1.AddCell(new PdfPCell(valDae)
+
+			tb1.AddCell(new PdfPCell(valFromDate)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				Border = 0,
@@ -510,7 +420,7 @@ namespace Report.Pdf.SampleReport
 				Padding = 5,
 
 			});
-			tb1.AddCell(new PdfPCell(noDae)
+			tb1.AddCell(new PdfPCell(fromDate)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				BorderWidth = 0,
@@ -519,7 +429,7 @@ namespace Report.Pdf.SampleReport
 				Padding = 5,
 			});
 
-			tb1.AddCell(new PdfPCell(valState)
+			tb1.AddCell(new PdfPCell(valToDate)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				Border = 0,
@@ -527,7 +437,7 @@ namespace Report.Pdf.SampleReport
 				Padding = 5,
 
 			});
-			tb1.AddCell(new PdfPCell(state)
+			tb1.AddCell(new PdfPCell(toDate)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				BorderWidth = 0,
@@ -538,7 +448,7 @@ namespace Report.Pdf.SampleReport
 
 
 
-			tb1.AddCell(new PdfPCell(datePhrase)
+			tb1.AddCell(new PdfPCell(valBalance)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_LTR,
 				Border = 0,
@@ -546,7 +456,7 @@ namespace Report.Pdf.SampleReport
 				Padding = 5
 
 			});
-			tb1.AddCell(new PdfPCell(date)
+			tb1.AddCell(new PdfPCell(balance)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
 				BorderWidth = 0,
@@ -569,7 +479,7 @@ namespace Report.Pdf.SampleReport
 			var headerTitle2 = headerTitle;
 
 			//headerTitle.PdfFont.FontSelector.AddFont(font3);
-			headerTitle.PdfFont.Size = 25;
+			headerTitle.PdfFont.Size = 20;
 			headerTitle.PdfFont.Style = DocumentFontStyle.Bold;
 
 
@@ -585,7 +495,7 @@ namespace Report.Pdf.SampleReport
 
 			});
 
-			headerTitle2.PdfFont.Size = 40;
+			headerTitle2.PdfFont.Size = 30;
 			headerTitle2.PdfFont.Style = DocumentFontStyle.Bold;
 
 			var nameDoc = headerTitle2.PdfFont.FontSelector.Process(_report.CompanyName);
@@ -611,8 +521,9 @@ namespace Report.Pdf.SampleReport
 			header.PdfFont.Size = 9;
 			header.PdfFont.Style = DocumentFontStyle.Normal;
 
-			var docType = header.PdfFont.FontSelector.Process("نوع سند:");
-			var valType = header.PdfFont.FontSelector.Process(firstRecord.DocumentType);
+			var docType = header.PdfFont.FontSelector.Process("تاریخ ایجاد:");
+			// todo:insert date created
+			var valType = header.PdfFont.FontSelector.Process(Convert.ToDateTime(valDate).ToString("yyyy/mm/dd"));
 
 
 
@@ -635,8 +546,8 @@ namespace Report.Pdf.SampleReport
 
 			header.PdfFont.Size = 9;
 			header.PdfFont.Style = DocumentFontStyle.Normal;
-
-			var valDesc = header.PdfFont.FontSelector.Process(firstRecord.DocumentDescription);
+			// todo: insert person created
+			var valDesc = header.PdfFont.FontSelector.Process("amin");
 
 			tb3.AddCell(new PdfPCell(valDesc)
 			{
@@ -647,7 +558,7 @@ namespace Report.Pdf.SampleReport
 			});
 
 			header.PdfFont.Size = 9;
-			var docDesc = header.PdfFont.FontSelector.Process("شرح سند:");
+			var docDesc = header.PdfFont.FontSelector.Process("ایجاد کننده:");
 
 
 			tb3.AddCell(new PdfPCell(docDesc)
@@ -679,104 +590,104 @@ namespace Report.Pdf.SampleReport
 			table.DefaultCell.Border = Rectangle.NO_BORDER;
 			table.SetWidths(new int[] { 100 });
 
-			var rowTB_1 = new PdfPTable(numColumns: 3)
-			{
-				SpacingAfter = 4
-			};
-			rowTB_1.DefaultCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-			rowTB_1.DefaultCell.Border = Rectangle.TOP_BORDER;
-			rowTB_1.DefaultCell.BorderColorRight = BaseColor.LIGHT_GRAY;
-			rowTB_1.DefaultCell.BorderWidthTop = 1;
-			rowTB_1.SetWidths(new int[] { 33, 33, 33 });
+			//var rowTB_1 = new PdfPTable(numColumns: 3)
+			//{
+			//	SpacingAfter = 4
+			//};
+			//rowTB_1.DefaultCell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+			//rowTB_1.DefaultCell.Border = Rectangle.TOP_BORDER;
+			//rowTB_1.DefaultCell.BorderColorRight = BaseColor.LIGHT_GRAY;
+			//rowTB_1.DefaultCell.BorderWidthTop = 1;
+			//rowTB_1.SetWidths(new int[] { 33, 33, 33 });
 
-			#region Row 1
+			//#region Row 1
 
-			#region Table 3
+			//#region Table 3
 
-			var tb13 = new PdfPTable(numColumns: 2);
-			tb13.DefaultCell.MinimumHeight = 20;
-			tb13.DefaultCell.Border = Rectangle.NO_BORDER;
-
-
-			var valConfirmation3 = footer.PdfFont.FontSelector.Process(_report.Confirmatory);
-			tb13.AddCell(new PdfPCell(valConfirmation3)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				Padding = 4,
-				PaddingLeft = 0,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Border = Rectangle.NO_BORDER
-			});
-
-			var dataConfirmation3 = footer.PdfFont.FontSelector.Process("تایید کننده :");
-			tb13.AddCell(new PdfPCell(dataConfirmation3)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				Padding = 4,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Border = Rectangle.NO_BORDER
-			});
-
-			rowTB_1.AddCell(tb13);
-			#endregion
-
-			#region Table 2
-
-			var tb12 = new PdfPTable(numColumns: 2);
-			tb12.DefaultCell.MinimumHeight = 20;
-			tb12.DefaultCell.Border = Rectangle.NO_BORDER;
+			//var tb13 = new PdfPTable(numColumns: 2);
+			//tb13.DefaultCell.MinimumHeight = 20;
+			//tb13.DefaultCell.Border = Rectangle.NO_BORDER;
 
 
-			var valConfirmation = footer.PdfFont.FontSelector.Process(_report.FinancialMaanager);
-			tb12.AddCell(new PdfPCell(valConfirmation)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				Padding = 4,
-				PaddingLeft = 0,
-				BorderColorTop = new BaseColor(System.Drawing.Color.LightGray.ToArgb()),
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Border = Rectangle.NO_BORDER
-			});
-			var dataConfirmation = footer.PdfFont.FontSelector.Process("مدیر مالی :");
-			tb12.AddCell(new PdfPCell(dataConfirmation)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				Padding = 4,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Border = Rectangle.NO_BORDER
-			});
+			//var valConfirmation3 = footer.PdfFont.FontSelector.Process(_report.Confirmatory);
+			//tb13.AddCell(new PdfPCell(valConfirmation3)
+			//{
+			//	RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+			//	Padding = 4,
+			//	PaddingLeft = 0,
+			//	HorizontalAlignment = Element.ALIGN_CENTER,
+			//	Border = Rectangle.NO_BORDER
+			//});
 
-			rowTB_1.AddCell(tb12);
-			#endregion
+			//var dataConfirmation3 = footer.PdfFont.FontSelector.Process("تایید کننده :");
+			//tb13.AddCell(new PdfPCell(dataConfirmation3)
+			//{
+			//	RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+			//	Padding = 4,
+			//	HorizontalAlignment = Element.ALIGN_CENTER,
+			//	Border = Rectangle.NO_BORDER
+			//});
 
-			#region Table 1
+			//rowTB_1.AddCell(tb13);
+			//#endregion
 
-			var tb11 = new PdfPTable(numColumns: 2);
-			tb11.DefaultCell.MinimumHeight = 20;
-			tb11.DefaultCell.Border = Rectangle.NO_BORDER;
+			//#region Table 2
 
-			var valRegolator = footer.PdfFont.FontSelector.Process(_report.Regulator);
-			tb11.AddCell(new PdfPCell(valRegolator)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				Padding = 4,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Border = Rectangle.NO_BORDER
-			});
+			//var tb12 = new PdfPTable(numColumns: 2);
+			//tb12.DefaultCell.MinimumHeight = 20;
+			//tb12.DefaultCell.Border = Rectangle.NO_BORDER;
 
-			var dateRegolator = footer.PdfFont.FontSelector.Process("تنظیم کننده :");
-			tb11.AddCell(new PdfPCell(dateRegolator)
-			{
-				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-				Padding = 4,
-				HorizontalAlignment = Element.ALIGN_CENTER,
-				Border = Rectangle.NO_BORDER
-			});
 
-			rowTB_1.AddCell(tb11);
-			#endregion
+			//var valConfirmation = footer.PdfFont.FontSelector.Process(_report.FinancialMaanager);
+			//tb12.AddCell(new PdfPCell(valConfirmation)
+			//{
+			//	RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+			//	Padding = 4,
+			//	PaddingLeft = 0,
+			//	BorderColorTop = new BaseColor(System.Drawing.Color.LightGray.ToArgb()),
+			//	HorizontalAlignment = Element.ALIGN_CENTER,
+			//	Border = Rectangle.NO_BORDER
+			//});
+			//var dataConfirmation = footer.PdfFont.FontSelector.Process("مدیر مالی :");
+			//tb12.AddCell(new PdfPCell(dataConfirmation)
+			//{
+			//	RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+			//	Padding = 4,
+			//	HorizontalAlignment = Element.ALIGN_CENTER,
+			//	Border = Rectangle.NO_BORDER
+			//});
 
-			#endregion
+			//rowTB_1.AddCell(tb12);
+			//#endregion
+
+			//#region Table 1
+
+			//var tb11 = new PdfPTable(numColumns: 2);
+			//tb11.DefaultCell.MinimumHeight = 20;
+			//tb11.DefaultCell.Border = Rectangle.NO_BORDER;
+
+			//var valRegolator = footer.PdfFont.FontSelector.Process(_report.Regulator);
+			//tb11.AddCell(new PdfPCell(valRegolator)
+			//{
+			//	RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+			//	Padding = 4,
+			//	HorizontalAlignment = Element.ALIGN_CENTER,
+			//	Border = Rectangle.NO_BORDER
+			//});
+
+			//var dateRegolator = footer.PdfFont.FontSelector.Process("تنظیم کننده :");
+			//tb11.AddCell(new PdfPCell(dateRegolator)
+			//{
+			//	RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+			//	Padding = 4,
+			//	HorizontalAlignment = Element.ALIGN_CENTER,
+			//	Border = Rectangle.NO_BORDER
+			//});
+
+			//rowTB_1.AddCell(tb11);
+			//#endregion
+
+			//#endregion
 
 			var rowTB_2 = new PdfPTable(3)
 			{
@@ -854,7 +765,7 @@ namespace Report.Pdf.SampleReport
 			#endregion
 
 
-			table.AddCell(rowTB_1);
+			//table.AddCell(rowTB_1);
 			table.AddCell(rowTB_2);
 			return table;
 		}

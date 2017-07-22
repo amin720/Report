@@ -111,10 +111,12 @@ namespace Report.Pdf.SampleReport.Grouping
 						//  آیا در هر صفحه یک گروه نمایش داده شود یا اینکه گروه‌ها به صورت متوالی در صفحات درج شوند
 						ShowOneGroupPerPage = true,
 						// فاصله جمع نهایی تمام گروه‌ها از آخرین گروه نمایش داده شده 
-						SpacingBeforeAllGroupsSummary = 5f,
+						//SpacingBeforeAllGroupsSummary = 5f,
 						// چه فاصله‌ای از انتهای صفحه، گروه جدیدی نباید درج شود و این گروه باید به صفحه بعدی منتقل شده و از آنجا شروع شود
 						NewGroupAvailableSpacingThreshold = 150,
-						SpacingAfterAllGroupsSummary = 5f
+
+						SpacingAfterAllGroupsSummary = 5f,
+						
 					});
 					table.SpacingAfter(4f);
 					//table.NumberOfDataRowsPerPage(15);
@@ -153,8 +155,8 @@ namespace Report.Pdf.SampleReport.Grouping
 						column.CellsHorizontalAlignment(HorizontalAlignment.Center);
 						column.IsVisible(true);
 						column.Order(0);
-						column.Width(1);
-						column.HeaderCell("#");
+						column.Width((float)0.666);
+						column.HeaderCell("ردیف",captionRotation:90);
 					});
 
 					columns.AddColumn(column =>
@@ -464,7 +466,7 @@ namespace Report.Pdf.SampleReport.Grouping
 			tb13.DefaultCell.Border = Rectangle.NO_BORDER;
 
 
-			var valConfirmation3 = footer.PdfFont.FontSelector.Process("محمد امین زینالی");
+			var valConfirmation3 = footer.PdfFont.FontSelector.Process(_report.FinancialMaanager);
 			tb13.AddCell(new PdfPCell(valConfirmation3)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
@@ -493,7 +495,7 @@ namespace Report.Pdf.SampleReport.Grouping
 			tb12.DefaultCell.Border = Rectangle.NO_BORDER;
 
 
-			var valConfirmation = footer.PdfFont.FontSelector.Process("محمد امین زینالی");
+			var valConfirmation = footer.PdfFont.FontSelector.Process(_report.Confirmatory);
 			tb12.AddCell(new PdfPCell(valConfirmation)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
@@ -521,7 +523,7 @@ namespace Report.Pdf.SampleReport.Grouping
 			tb11.DefaultCell.MinimumHeight = 20;
 			tb11.DefaultCell.Border = Rectangle.NO_BORDER;
 
-			var valRegolator = footer.PdfFont.FontSelector.Process("محمد امین زینالی");
+			var valRegolator = footer.PdfFont.FontSelector.Process(_report.Regulator);
 			tb11.AddCell(new PdfPCell(valRegolator)
 			{
 				RunDirection = PdfWriter.RUN_DIRECTION_RTL,
