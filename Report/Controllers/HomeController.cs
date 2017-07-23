@@ -6,9 +6,10 @@ using System.Web.Mvc;
 using System.Web.Services.Description;
 using PdfRpt.Core.Contracts;
 using Report.Models;
+using Report.Pdf;
 using Report.Pdf.SampleReport.Headers_Footers;
 using Report.Pdf.SampleReport.InlineHeader;
-using Reportig;
+using AppPath = Reportig.AppPath;
 
 namespace Report.Controllers
 {
@@ -129,7 +130,7 @@ namespace Report.Controllers
 			return RedirectToAction("Index");
 		}
 
-		public ActionResult TotalBalance()
+		public ActionResult TaxBalance()
 		{
 			var dbFirst = new DecaFinancialEntities();
 
@@ -146,66 +147,13 @@ namespace Report.Controllers
 				DocumentName = "تراز کل",
 				Confirmatory = "محمد انصاری",
 				Regulator = "ملیکا فرازنشان",
-				FinancialMaanager = "رامین ناصر نصیر"
+				FinancialMaanager = "رامین ناصر نصیر",
+				TypeBalance = TypeBalance.Total
 			};
 
 			var querySql = @"dbo.STP_GetTotalAccountBalance4Columns @AccoutingYear = 2,@UserID = 1003, @StartDate = NULL,@EndDate = NULL";
 
-			var outputFilePath = report.AccountingReportTotalBalance(report, sqlQuery: querySql, model: dbFirst, tempraryStatus: true);
-
-			return Redirect(outputFilePath);
-		}
-
-		public ActionResult CertainBalance()
-		{
-			var dbFirst = new DecaFinancialEntities();
-
-			var report = new Report.Pdf.ConstructurePdfReport()
-			{
-				Author = "Mohammad Amin Zeynali",
-				Application = "Deca Provider",
-				Keywords = "Accounting, Deca",
-				Subject = "Report",
-				Title = "Data",
-				PageSize = PdfPageSize.A4,
-				Orientation = PageOrientation.Portrait,
-				CompanyName = "شرکت دامداری هوشنگ ",
-				DocumentName = "تراز معین",
-				Confirmatory = "محمد انصاری",
-				Regulator = "ملیکا فرازنشان",
-				FinancialMaanager = "رامین ناصر نصیر"
-			};
-
-			var querySql = @"dbo.STP_GetCertainAccountBalance4Columns @AccoutingYear = 2,@UserID = 1003, @StartDate = NULL,@EndDate = NULL";
-
-			var outputFilePath = report.AccountingReportCertainBalance(report, sqlQuery: querySql, model: dbFirst, tempraryStatus: true);
-
-			return Redirect(outputFilePath);
-		}
-
-		public ActionResult DetailedBalance()
-		{
-			var dbFirst = new DecaFinancialEntities();
-
-			var report = new Report.Pdf.ConstructurePdfReport()
-			{
-				Author = "Mohammad Amin Zeynali",
-				Application = "Deca Provider",
-				Keywords = "Accounting, Deca",
-				Subject = "Report",
-				Title = "Data",
-				PageSize = PdfPageSize.A4,
-				Orientation = PageOrientation.Portrait,
-				CompanyName = "شرکت دامداری هوشنگ ",
-				DocumentName = "تراز تفصیلی",
-				Confirmatory = "محمد انصاری",
-				Regulator = "ملیکا فرازنشان",
-				FinancialMaanager = "رامین ناصر نصیر"
-			};
-
-			var querySql = @"dbo.STP_GetDetailedAccountBalance4Columns @AccoutingYear = 2,@UserID = 1003, @StartDate = NULL,@EndDate = NULL";
-
-			var outputFilePath = report.AccountingReportDetailedBalance(report, sqlQuery: querySql, model: dbFirst, tempraryStatus: true);
+			var outputFilePath = report.AccountingReportTaxBalance(report, sqlQuery: querySql, model: dbFirst, tempraryStatus: true);
 
 			return Redirect(outputFilePath);
 		}
